@@ -19,6 +19,7 @@
             overflow: auto;
             border: 2px solid #000;
             position: relative;
+            margin-bottom: 20px; /* Margines dla przycisków */
         }
         #maze {
             display: grid;
@@ -46,6 +47,25 @@
             height: 150px; 
             transform: translate(-50%, -50%);
         }
+        .controls {
+            display: flex;
+            justify-content: center;
+            margin: 10px 0;
+        }
+        .control-button {
+            width: 50px;
+            height: 50px;
+            margin: 5px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 24px;
+        }
+        .control-button:active {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
@@ -53,6 +73,14 @@
     <div id="mazeContainer">
         <div id="maze"></div>
         <div class="exit" id="exit"></div>
+    </div>
+    <div class="controls">
+        <button class="control-button" id="upButton">↑</button>
+        <div>
+            <button class="control-button" id="leftButton">←</button>
+            <button class="control-button" id="rightButton">→</button>
+        </div>
+        <button class="control-button" id="downButton">↓</button>
     </div>
     <script>
         const rows = 85;
@@ -63,22 +91,11 @@
         const newMazeButton = document.getElementById('newMazeButton');
         let maze, playerPosition;
 
-        let isMouseDown = false;
-        let mouseMoveInterval;
-
         newMazeButton.addEventListener('click', setupMaze);
-        mazeContainer.addEventListener('mousedown', () => {
-            isMouseDown = true;
-            movePlayerWithMouse();
-        });
-        mazeContainer.addEventListener('mouseup', () => {
-            isMouseDown = false;
-            clearInterval(mouseMoveInterval);
-        });
-        mazeContainer.addEventListener('mouseleave', () => {
-            isMouseDown = false;
-            clearInterval(mouseMoveInterval);
-        });
+        document.getElementById('upButton').addEventListener('click', () => movePlayer(0, -1));
+        document.getElementById('downButton').addEventListener('click', () => movePlayer(0, 1));
+        document.getElementById('leftButton').addEventListener('click', () => movePlayer(-1, 0));
+        document.getElementById('rightButton').addEventListener('click', () => movePlayer(1, 0));
 
         function setupMaze() {
             maze = Array.from({ length: rows }, () => Array(cols).fill(0));
@@ -91,7 +108,6 @@
                     cell.classList.add('cell');
                     cell.setAttribute('data-row', r);
                     cell.setAttribute('data-col', c);
-                    cell.addEventListener('click', () => handleCellClick(r, c));
                     mazeElement.appendChild(cell);
                 }
             }
@@ -103,10 +119,11 @@
             document.addEventListener('keydown', handleKeyPress);
         }
 
-        function handleCellClick(row, col) {
-            const cell = mazeElement.querySelector(`[data-row="${row}"][data-col="${col}"]`);
-            if (maze[row][col] === 1) {
-                moveToCell(row, col);
+        function movePlayer(dx, dy) {
+            const newRow = playerPosition[0] + dy;
+            const newCol = playerPosition[1] + dx;
+            if (newRow >= 0 && newRow < rows && newCol >= 0 && newCol < cols && maze[newRow][newCol] === 1) {
+                moveToCell(newRow, newCol);
             }
         }
 
@@ -116,7 +133,7 @@
 
             playerPosition = [row, col];
             placePlayer();
-            centerPlayer(); // Dodane centrowanie po ruchu
+            centerPlayer();
 
             const exitRow = Math.floor(rows / 2);
             const exitCol = Math.floor(cols / 2);
@@ -206,36 +223,16 @@
 
         function handleKeyPress(event) {
             const keyMap = {
-                ArrowUp: [-1, 0],
-                ArrowDown: [1, 0],
-                ArrowLeft: [0, -1],
-                ArrowRight: [0, 1]
+                ArrowUp: [0, -1],
+                ArrowDown: [0, 1],
+                ArrowLeft: [-1, 0],
+                ArrowRight: [1, 0]
             };
             const move = keyMap[event.key];
 
             if (move) {
-                const newRow = playerPosition[0] + move[0];
-                const newCol = playerPosition[1] + move[1];
-                if (newRow >= 0 && newRow < rows && newCol >= 0 && newCol < cols && maze[newRow][newCol] === 1) {
-                    moveToCell(newRow, newCol);
-                }
+                movePlayer(move[0], move[1]);
             }
-        }
-
-        function movePlayerWithMouse() {
-            mouseMoveInterval = setInterval(() => {
-                if (isMouseDown) {
-                    const rect = mazeElement.getBoundingClientRect();
-                    const mouseX = event.clientX - rect.left;
-                    const mouseY = event.clientY - rect.top;
-                    const newRow = Math.floor(mouseY / 15);
-                    const newCol = Math.floor(mouseX / 15);
-
-                    if (newRow >= 0 && newRow < rows && newCol >= 0 && newCol < cols && maze[newRow][newCol] === 1) {
-                        moveToCell(newRow, newCol);
-                    }
-                }
-            }, 100);
         }
 
         setupMaze(); // Generuj pierwszy labirynt na starcie
