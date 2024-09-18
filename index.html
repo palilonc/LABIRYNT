@@ -63,7 +63,22 @@
         const newMazeButton = document.getElementById('newMazeButton');
         let maze, playerPosition;
 
+        let isMouseDown = false;
+        let mouseMoveInterval;
+
         newMazeButton.addEventListener('click', setupMaze);
+        mazeContainer.addEventListener('mousedown', () => {
+            isMouseDown = true;
+            movePlayerWithMouse();
+        });
+        mazeContainer.addEventListener('mouseup', () => {
+            isMouseDown = false;
+            clearInterval(mouseMoveInterval);
+        });
+        mazeContainer.addEventListener('mouseleave', () => {
+            isMouseDown = false;
+            clearInterval(mouseMoveInterval);
+        });
 
         function setupMaze() {
             maze = Array.from({ length: rows }, () => Array(cols).fill(0));
@@ -91,18 +106,22 @@
         function handleCellClick(row, col) {
             const cell = mazeElement.querySelector(`[data-row="${row}"][data-col="${col}"]`);
             if (maze[row][col] === 1) { // Check if the cell is a path
-                const currentCell = mazeElement.querySelector(`[data-row="${playerPosition[0]}"][data-col="${playerPosition[1]}"]`);
-                currentCell.classList.remove('player');
+                moveToCell(row, col);
+            }
+        }
 
-                playerPosition = [row, col];
-                placePlayer();
+        function moveToCell(row, col) {
+            const currentCell = mazeElement.querySelector(`[data-row="${playerPosition[0]}"][data-col="${playerPosition[1]}"]`);
+            currentCell.classList.remove('player');
 
-                // Check if the player reached the exit
-                const exitRow = Math.floor(rows / 2);
-                const exitCol = Math.floor(cols / 2);
-                if (row === exitRow && col === exitCol) {
-                    alert('Gratulacje! Osiągnąłeś wyjście!');
-                }
+            playerPosition = [row, col];
+            placePlayer();
+
+            // Check if the player reached the exit
+            const exitRow = Math.floor(rows / 2);
+            const exitCol = Math.floor(cols / 2);
+            if (row === exitRow && col === exitCol) {
+                alert('Gratulacje! Osiągnąłeś wyjście!');
             }
         }
 
@@ -196,8 +215,28 @@
             const move = keyMap[event.key];
 
             if (move) {
-                movePlayer(move);
+                const newRow = playerPosition[0] + move[0];
+                const newCol = playerPosition[1] + move[1];
+                if (newRow >= 0 && newRow < rows && newCol >= 0 && newCol < cols && maze[newRow][newCol] === 1) {
+                    moveToCell(newRow, newCol);
+                }
             }
+        }
+
+        function movePlayerWithMouse() {
+            mouseMoveInterval = setInterval(() => {
+                if (isMouseDown) {
+                    const rect = mazeElement.getBoundingClientRect();
+                    const mouseX = event.clientX - rect.left;
+                    const mouseY = event.clientY - rect.top;
+                    const newRow = Math.floor(mouseY / 15);
+                    const newCol = Math.floor(mouseX / 15);
+
+                    if (newRow >= 0 && newRow < rows && newCol >= 0 && newCol < cols && maze[newRow][newCol] === 1) {
+                        moveToCell(newRow, newCol);
+                    }
+                }
+            }, 100);
         }
 
         setupMaze(); // Generuj pierwszy labirynt na starcie
