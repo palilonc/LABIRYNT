@@ -26,8 +26,8 @@
             grid-template-rows: repeat(85, 15px);    /* 85 wierszy */
         }
         .cell {
-            width: 15px;  /* Ustawione na 15px */
-            height: 15px; /* Ustawione na 15px */
+            width: 15px;
+            height: 15px;
             border: 1px solid #000;
         }
         .wall {
@@ -52,7 +52,7 @@
     <button id="newMazeButton">Nowy Labirynt</button>
     <div id="mazeContainer">
         <div id="maze"></div>
-        <div class="exit" id="exit"></div> <!-- Dodanie wyjścia jako osobny element -->
+        <div class="exit" id="exit"></div>
     </div>
     <script>
         const rows = 85;
@@ -76,6 +76,7 @@
                     cell.classList.add('cell');
                     cell.setAttribute('data-row', r);
                     cell.setAttribute('data-col', c);
+                    cell.addEventListener('click', () => handleCellClick(r, c)); // Add click event
                     mazeElement.appendChild(cell);
                 }
             }
@@ -85,6 +86,24 @@
             drawMaze();
             placePlayer();
             document.addEventListener('keydown', handleKeyPress);
+        }
+
+        function handleCellClick(row, col) {
+            const cell = mazeElement.querySelector(`[data-row="${row}"][data-col="${col}"]`);
+            if (maze[row][col] === 1) { // Check if the cell is a path
+                const currentCell = mazeElement.querySelector(`[data-row="${playerPosition[0]}"][data-col="${playerPosition[1]}"]`);
+                currentCell.classList.remove('player');
+
+                playerPosition = [row, col];
+                placePlayer();
+
+                // Check if the player reached the exit
+                const exitRow = Math.floor(rows / 2);
+                const exitCol = Math.floor(cols / 2);
+                if (row === exitRow && col === exitCol) {
+                    alert('Gratulacje! Osiągnąłeś wyjście!');
+                }
+            }
         }
 
         function generateMaze(startRow, startCol) {
@@ -178,24 +197,6 @@
 
             if (move) {
                 movePlayer(move);
-            }
-        }
-
-        function movePlayer(move) {
-            const [newRow, newCol] = [playerPosition[0] + move[0], playerPosition[1] + move[1]];
-            if (newRow >= 0 && newRow < rows && newCol >= 0 && newCol < cols && maze[newRow][newCol] === 1) {
-                const currentCell = mazeElement.querySelector(`[data-row="${playerPosition[0]}"][data-col="${playerPosition[1]}"]`);
-                currentCell.classList.remove('player');
-
-                playerPosition = [newRow, newCol];
-                placePlayer();
-
-                // Sprawdzenie, czy gracz dotarł do wyjścia
-                const exitRow = Math.floor(rows / 2);
-                const exitCol = Math.floor(cols / 2);
-                if (newRow === exitRow && newCol === exitCol) {
-                    alert('Gratulacje! Osiągnąłeś wyjście!');
-                }
             }
         }
 
