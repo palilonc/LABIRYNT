@@ -10,16 +10,19 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            height: 100vh;
             margin: 0;
             background-color: #f0f0f0;
         }
+        #mazeContainer {
+            width: 100vw;  /* Szerokość kontenera */
+            height: 100vh; /* Wysokość kontenera */
+            overflow: auto; /* Przewijanie */
+            border: 2px solid #000;
+        }
         #maze {
             display: grid;
-            border: 2px solid #000;
-            grid-template-columns: repeat(180, 45px); /* Ustawione na 180 */
-            grid-template-rows: repeat(85, 45px);    /* Ustawione na 85 */
-            margin-bottom: 20px;
+            grid-template-columns: repeat(180, 45px); /* 180 kolumn */
+            grid-template-rows: repeat(85, 45px);    /* 85 wierszy */
         }
         .cell {
             width: 45px;  /* Ustawione na 45px */
@@ -42,7 +45,9 @@
 </head>
 <body>
     <button id="newMazeButton">Nowy Labirynt</button>
-    <div id="maze"></div>
+    <div id="mazeContainer">
+        <div id="maze"></div>
+    </div>
     <script>
         const rows = 85; // Ustawione na 85
         const cols = 180; // Ustawione na 180
