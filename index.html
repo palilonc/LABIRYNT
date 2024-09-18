@@ -19,6 +19,9 @@
         #initial-money {
             margin: 20px;
         }
+        .cards {
+            margin: 20px;
+        }
     </style>
 </head>
 <body>
@@ -55,7 +58,9 @@
     <div id="oczko" class="game">
         <h2>Oczko</h2>
         <input type="number" id="oczko-bet" placeholder="Kwota zakładu">
-        <button onclick="playOczko()">Graj</button>
+        <button onclick="startOczko()">Graj</button>
+        <div class="cards" id="oczko-cards"></div>
+        <div class="cards" id="dealer-cards"></div>
     </div>
 
     <div id="wojna" class="game">
@@ -83,8 +88,51 @@
             document.getElementById('money').innerText = money;
         }
 
+        function startOczko() {
+            const bet = parseInt(document.getElementById('oczko-bet').value);
+            if (bet > money) {
+                alert("Nie masz wystarczającej kwoty!");
+                return;
+            }
+            money -= bet;
+
+            const playerCards = [drawCard(), drawCard()];
+            const dealerCards = [drawCard(), drawCard()];
+
+            const playerScore = calculateScore(playerCards);
+            const dealerScore = calculateScore(dealerCards);
+
+            displayCards(playerCards, dealerCards);
+
+            let result;
+            if (playerScore > 21) {
+                result = 'Przegrałeś! Suma kart: ' + playerScore;
+            } else if (dealerScore > 21 || playerScore > dealerScore) {
+                result = 'Wygrałeś! Suma kart: ' + playerScore;
+                money += bet * 2;
+            } else {
+                result = 'Przegrałeś! Suma kart: ' + playerScore;
+            }
+
+            alert(result);
+            updateMoney();
+        }
+
+        function drawCard() {
+            return Math.floor(Math.random() * 10) + 1; // Losowa karta od 1 do 10
+        }
+
+        function calculateScore(cards) {
+            return cards.reduce((a, b) => a + b, 0);
+        }
+
+        function displayCards(playerCards, dealerCards) {
+            document.getElementById('oczko-cards').innerText = 'Twoje karty: ' + playerCards.join(', ');
+            document.getElementById('dealer-cards').innerText = 'Karty krupiera: ' + dealerCards.join(', ');
+        }
+
         function playSlot() {
-            const result = Math.random() < 0.5 ? 1000 : -1000; // Przykładowa logika
+            const result = Math.random() < 0.5 ? 1000 : -1000;
             money += result;
             alert(`Wynik: ${result > 0 ? 'Wygrałeś' : 'Przegrałeś'} ${Math.abs(result)} USD`);
             updateMoney();
@@ -97,20 +145,7 @@
                 return;
             }
             money -= bet;
-            const result = Math.random() < 0.5 ? bet * 2 : 0; // Przykładowa logika
-            money += result;
-            alert(`Wynik: ${result > 0 ? 'Wygrałeś' : 'Przegrałeś'} ${Math.abs(result)} USD`);
-            updateMoney();
-        }
-
-        function playOczko() {
-            const bet = parseInt(document.getElementById('oczko-bet').value);
-            if (bet > money) {
-                alert("Nie masz wystarczającej kwoty!");
-                return;
-            }
-            money -= bet;
-            const result = Math.random() < 0.5 ? bet * 1.5 : 0; // Przykładowa logika
+            const result = Math.random() < 0.5 ? bet * 2 : 0;
             money += result;
             alert(`Wynik: ${result > 0 ? 'Wygrałeś' : 'Przegrałeś'} ${Math.abs(result)} USD`);
             updateMoney();
@@ -125,7 +160,7 @@
             money -= bet;
             const playerCard = Math.floor(Math.random() * 13) + 1;
             const aiCard = Math.floor(Math.random() * 13) + 1;
-            const result = playerCard > aiCard ? bet : 0; // Przykładowa logika
+            const result = playerCard > aiCard ? bet : 0;
             money += result;
             alert(`Twoja karta: ${playerCard}, Karta AI: ${aiCard}. Wynik: ${result > 0 ? 'Wygrałeś' : 'Przegrałeś'} ${Math.abs(result)} USD`);
             updateMoney();
@@ -138,7 +173,7 @@
                 return;
             }
             money -= bet;
-            const win = Math.random() < 0.5; // Prosty mechanizm wygranej
+            const win = Math.random() < 0.5;
             const result = win ? bet * 2 : 0;
             money += result;
             alert(`Wynik: ${win ? 'Wygrałeś' : 'Przegrałeś'} ${Math.abs(result)} USD`);
