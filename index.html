@@ -123,9 +123,11 @@
                 return;
             }
             money -= bet;
-            const result = Math.random() < 0.5 ? bet : 0; // Przykładowa logika
+            const playerCard = Math.floor(Math.random() * 13) + 1;
+            const aiCard = Math.floor(Math.random() * 13) + 1;
+            const result = playerCard > aiCard ? bet : 0; // Przykładowa logika
             money += result;
-            alert(`Wynik: ${result > 0 ? 'Wygrałeś' : 'Przegrałeś'} ${Math.abs(result)} USD`);
+            alert(`Twoja karta: ${playerCard}, Karta AI: ${aiCard}. Wynik: ${result > 0 ? 'Wygrałeś' : 'Przegrałeś'} ${Math.abs(result)} USD`);
             updateMoney();
         }
 
@@ -136,9 +138,10 @@
                 return;
             }
             money -= bet;
-            const result = Math.random() < 0.5 ? bet * 2 : 0; // Przykładowa logika
+            const win = Math.random() < 0.5; // Prosty mechanizm wygranej
+            const result = win ? bet * 2 : 0;
             money += result;
-            alert(`Wynik: ${result > 0 ? 'Wygrałeś' : 'Przegrałeś'} ${Math.abs(result)} USD`);
+            alert(`Wynik: ${win ? 'Wygrałeś' : 'Przegrałeś'} ${Math.abs(result)} USD`);
             updateMoney();
         }
     </script>
