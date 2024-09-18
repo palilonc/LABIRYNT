@@ -42,10 +42,9 @@
         .exit {
             background-color: orange; /* Kolor wyjścia */
             position: absolute;
-            top: calc(50% - 75px); /* Wyśrodkowanie w pionie */
-            left: calc(50% - 75px); /* Wyśrodkowanie w poziomie */
             width: 150px;  /* 10 kratki szerokości */
             height: 150px; /* 10 kratki wysokości */
+            transform: translate(-50%, -50%); /* Wyśrodkowanie na kropce */
         }
     </style>
 </head>
@@ -53,13 +52,14 @@
     <button id="newMazeButton">Nowy Labirynt</button>
     <div id="mazeContainer">
         <div id="maze"></div>
-        <div class="exit"></div> <!-- Dodanie wyjścia jako osobny element -->
+        <div class="exit" id="exit"></div> <!-- Dodanie wyjścia jako osobny element -->
     </div>
     <script>
         const rows = 85;
         const cols = 180;
         const mazeElement = document.getElementById('maze');
         const mazeContainer = document.getElementById('mazeContainer');
+        const exitElement = document.getElementById('exit');
         const newMazeButton = document.getElementById('newMazeButton');
         let maze, playerPosition;
 
@@ -81,6 +81,7 @@
             }
 
             generateMaze(1, 1);
+            placeExit();
             drawMaze();
             placePlayer();
             document.addEventListener('keydown', handleKeyPress);
@@ -124,6 +125,16 @@
             const wallRow = (row1 + row2) / 2;
             const wallCol = (col1 + col2) / 2;
             maze[wallRow][wallCol] = 1;
+        }
+
+        function placeExit() {
+            const exitRow = Math.floor(rows / 2);
+            const exitCol = Math.floor(cols / 2);
+            maze[exitRow][exitCol] = 1;
+
+            // Ustawienie pozycji wyjścia
+            exitElement.style.top = `${(exitRow * 15) + 7.5}px`; // 15px wysokości komórki / 2
+            exitElement.style.left = `${(exitCol * 15) + 7.5}px`; // 15px szerokości komórki / 2
         }
 
         function drawMaze() {
@@ -180,8 +191,9 @@
                 placePlayer();
 
                 // Sprawdzenie, czy gracz dotarł do wyjścia
-                if (newRow >= Math.floor(rows / 2) - 5 && newRow < Math.floor(rows / 2) + 5 &&
-                    newCol >= Math.floor(cols / 2) - 5 && newCol < Math.floor(cols / 2) + 5) {
+                const exitRow = Math.floor(rows / 2);
+                const exitCol = Math.floor(cols / 2);
+                if (newRow === exitRow && newCol === exitCol) {
                     alert('Gratulacje! Osiągnąłeś wyjście!');
                 }
             }
