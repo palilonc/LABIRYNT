@@ -27,6 +27,12 @@
         .wall {
             background-color: #000;
         }
+        .path {
+            background-color: #fff;
+        }
+        .player {
+            background-color: red;
+        }
     </style>
 </head>
 <body>
@@ -37,7 +43,7 @@
         const mazeElement = document.getElementById('maze');
         const maze = Array.from({ length: rows }, () => Array(cols).fill(0));
         const stack = [];
-        const cellSize = 20;
+        let playerPosition = [0, 0];
 
         function setupMaze() {
             for (let r = 0; r < rows; r++) {
@@ -51,6 +57,8 @@
             }
             generateMaze(0, 0);
             drawMaze();
+            placePlayer();
+            document.addEventListener('keydown', handleKeyPress);
         }
 
         function generateMaze(row, col) {
@@ -88,8 +96,7 @@
         function removeWalls(row1, col1, row2, col2) {
             const wallRow = (row1 + row2) / 2;
             const wallCol = (col1 + col2) / 2;
-            const wallCell = mazeElement.querySelector(`[data-row="${wallRow}"][data-col="${wallCol}"]`);
-            wallCell.classList.remove('cell');
+            maze[wallRow][wallCol] = 1; // Ustaw ścianę jako odwiedzoną
         }
 
         function drawMaze() {
@@ -98,8 +105,36 @@
                 const col = index % cols;
                 if (maze[row][col] === 0) {
                     cell.classList.add('wall');
+                } else {
+                    cell.classList.add('path');
                 }
             });
+        }
+
+        function placePlayer() {
+            const playerCell = mazeElement.querySelector(`[data-row="${playerPosition[0]}"][data-col="${playerPosition[1]}"]`);
+            playerCell.classList.add('player');
+        }
+
+        function handleKeyPress(event) {
+            const keyMap = {
+                ArrowUp: [-1, 0],
+                ArrowDown: [1, 0],
+                ArrowLeft: [0, -1],
+                ArrowRight: [0, 1]
+            };
+            const move = keyMap[event.key];
+
+            if (move) {
+                const [newRow, newCol] = [playerPosition[0] + move[0], playerPosition[1] + move[1]];
+                if (newRow >= 0 && newRow < rows && newCol >= 0 && newCol < cols && maze[newRow][newCol] === 1) {
+                    const currentCell = mazeElement.querySelector(`[data-row="${playerPosition[0]}"][data-col="${playerPosition[1]}"]`);
+                    currentCell.classList.remove('player');
+
+                    playerPosition = [newRow, newCol];
+                    placePlayer();
+                }
+            }
         }
 
         setupMaze();
