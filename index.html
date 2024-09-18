@@ -40,7 +40,15 @@
             background-color: red;
         }
         .exit {
-            background-color: green;
+            position: relative;
+            background-color: transparent;
+        }
+        .exit img {
+            width: 150px; /* 10x15px dla 10x10 kratek */
+            height: 150px;
+            position: absolute;
+            top: -75px; /* Wyśrodkowanie */
+            left: -75px; /* Wyśrodkowanie */
         }
     </style>
 </head>
@@ -125,18 +133,23 @@
             const exitRow = Math.floor(rows / 2);
             const exitCol = Math.floor(cols / 2);
             maze[exitRow][exitCol] = 1;
+
+            // Tworzenie wyjścia 10x10
+            for (let r = -5; r <= 4; r++) {
+                for (let c = -5; c <= 4; c++) {
+                    if (Math.abs(r) === 5 || Math.abs(c) === 5) {
+                        maze[exitRow + r][exitCol + c] = 1;
+                    }
+                }
+            }
+
             const exitCell = mazeElement.querySelector(`[data-row="${exitRow}"][data-col="${exitCol}"]`);
             exitCell.classList.add('exit');
 
-            // Tworzenie czterech dróg prowadzących do wyjścia
-            const directions = [[-1, 0], [1, 0], [0, -1], [0, 1]];
-            directions.forEach(([dRow, dCol]) => {
-                const newRow = exitRow + dRow;
-                const newCol = exitCol + dCol;
-                if (newRow > 0 && newRow < rows && newCol > 0 && newCol < cols) {
-                    maze[newRow][newCol] = 1;
-                }
-            });
+            // Dodanie obrazka wrót
+            const img = document.createElement('img');
+            img.src = 'path/to/your/image.png'; // Zmień na ścieżkę do swojego obrazka
+            exitCell.appendChild(img);
         }
 
         function drawMaze() {
