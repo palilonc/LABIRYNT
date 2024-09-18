@@ -17,13 +17,13 @@
         #maze {
             display: grid;
             border: 2px solid #000;
-            grid-template-columns: repeat(43, 10px); /* Zmienione na 43 */
-            grid-template-rows: repeat(21, 10px);
+            grid-template-columns: repeat(85, 15px); /* Zmienione na 85 */
+            grid-template-rows: repeat(180, 15px);   /* Zmienione na 180 */
             margin-bottom: 20px;
         }
         .cell {
-            width: 10px;
-            height: 10px;
+            width: 15px;  /* Zmienione na 15px */
+            height: 15px; /* Zmienione na 15px */
             border: 1px solid #000;
         }
         .wall {
@@ -44,8 +44,8 @@
     <button id="newMazeButton">Nowy Labirynt</button>
     <div id="maze"></div>
     <script>
-        const rows = 21; // Pozostawione bez zmian
-        const cols = 43; // Zmienione na 43
+        const rows = 180; // Ustawione na 180
+        const cols = 85;  // Ustawione na 85
         const mazeElement = document.getElementById('maze');
         const newMazeButton = document.getElementById('newMazeButton');
         let maze, playerPosition;
