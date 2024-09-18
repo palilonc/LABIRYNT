@@ -3,104 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Google News Widget</title>
+    <title>Sklep Internetowy</title>
     <style>
         body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            font-family: Arial, sans-serif;
             margin: 0;
-            padding: 20px;
-            background-color: #f0f0f0;
+            padding: 0;
+            background-color: #f4f4f4;
         }
-        form {
-            display: flex;
-            justify-content: center;
-            margin: 20px;
+        header {
+            background: #333;
+            color: #fff;
+            padding: 10px 0;
+            text-align: center;
         }
-        input[type="text"] {
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            width: 300px; /* Dostosuj szerokość */
+        nav {
+            margin: 20px 0;
         }
-        input[type="submit"] {
-            padding: 10px;
-            background-color: #4285f4; /* Kolor Google */
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-left: 5px;
-        }
-        input[type="submit"]:hover {
-            background-color: #357ae8; /* Mroczniejszy kolor na hover */
-        }
-        #newsContainer {
-            width: 100%;
-            max-width: 800px;
-            margin-top: 20px;
-            border: 2px solid #000;
-            padding: 10px;
-            background-color: #fff;
-        }
-        .news-item {
-            margin: 10px 0;
-        }
-        .news-item a {
+        nav a {
+            margin: 0 15px;
+            color: #333;
             text-decoration: none;
-            color: #4285f4;
         }
-        .news-item a:hover {
-            text-decoration: underline;
+        .container {
+            width: 80%;
+            margin: 0 auto;
+        }
+        .product {
+            background: #fff;
+            border: 1px solid #ddd;
+            margin: 15px 0;
+            padding: 15px;
+            text-align: center;
+        }
+        .product img {
+            max-width: 100%;
+            height: auto;
+        }
+        footer {
+            text-align: center;
+            padding: 20px 0;
+            background: #333;
+            color: #fff;
+            position: relative;
+            bottom: 0;
+            width: 100%;
         }
     </style>
 </head>
 <body>
-    <h1>Wyszukiwarka Google News</h1>
-    <form onsubmit="return fetchNews();">
-        <input type="text" id="searchQuery" placeholder="Szukaj w Google News" required>
-        <input type="submit" value="Szukaj">
-    </form>
-    <h2>Aktualności</h2>
-    <div id="newsContainer"></div>
 
-    <script>
-        async function fetchNews() {
-            const query = document.getElementById('searchQuery').value;
-            const url = `https://news.google.com/rss/search?q=${encodeURIComponent(query)}&hl=pl&gl=PL&ceid=PL:pl`;
+<header>
+    <h1>Sklep Internetowy</h1>
+    <nav>
+        <a href="#">Strona Główna</a>
+        <a href="#">Produkty</a>
+        <a href="#">Kontakt</a>
+    </nav>
+</header>
 
-            try {
-                const response = await fetch(url);
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                const data = await response.text();
-                displayNews(data);
-            } catch (error) {
-                console.error('Wystąpił błąd:', error);
-                document.getElementById('newsContainer').innerHTML = 'Nie udało się pobrać wiadomości.';
-            }
-            return false; // Zapobiega przeładowaniu strony
-        }
+<div class="container">
+    <h2>Nasze Produkty</h2>
 
-        function displayNews(data) {
-            const parser = new DOMParser();
-            const xml = parser.parseFromString(data, "text/xml");
-            const items = xml.getElementsByTagName("item");
-            const newsContainer = document.getElementById('newsContainer');
-            newsContainer.innerHTML = '';
+    <div class="product">
+        <h3>Produkt 1</h3>
+        <img src="https://via.placeholder.com/150" alt="Produkt 1">
+        <p>Cena: 99,99 zł</p>
+        <button>Kup Teraz</button>
+    </div>
 
-            for (let i = 0; i < items.length; i++) {
-                const title = items[i].getElementsByTagName("title")[0].textContent;
-                const link = items[i].getElementsByTagName("link")[0].textContent;
+    <div class="product">
+        <h3>Produkt 2</h3>
+        <img src="https://via.placeholder.com/150" alt="Produkt 2">
+        <p>Cena: 199,99 zł</p>
+        <button>Kup Teraz</button>
+    </div>
 
-                const newsItem = document.createElement('div');
-                newsItem.className = 'news-item';
-                newsItem.innerHTML = `<a href="${link}" target="_blank">${title}</a>`;
-                newsContainer.appendChild(newsItem);
-            }
-        }
-    </script>
+    <div class="product">
+        <h3>Produkt 3</h3>
+        <img src="https://via.placeholder.com/150" alt="Produkt 3">
+        <p>Cena: 299,99 zł</p>
+        <button>Kup Teraz</button>
+    </div>
+</div>
+
+<footer>
+    <p>© 2024 Sklep Internetowy</p>
+</footer>
+
 </body>
 </html>
