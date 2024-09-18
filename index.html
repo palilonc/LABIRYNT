@@ -43,44 +43,103 @@
 
     <div id="slot" class="game">
         <h2>Jednoręki bandyta</h2>
-        <p>Opis gry...</p>
-        <button onclick="play('slot')">Graj</button>
+        <button onclick="playSlot()">Graj</button>
     </div>
 
     <div id="poker" class="game">
         <h2>Poker</h2>
-        <p>Opis gry...</p>
-        <button onclick="play('poker')">Graj</button>
+        <input type="number" id="poker-bet" placeholder="Kwota zakładu">
+        <button onclick="playPoker()">Graj</button>
     </div>
 
     <div id="oczko" class="game">
         <h2>Oczko</h2>
-        <p>Opis gry...</p>
-        <button onclick="play('oczko')">Graj</button>
+        <input type="number" id="oczko-bet" placeholder="Kwota zakładu">
+        <button onclick="playOczko()">Graj</button>
     </div>
 
     <div id="wojna" class="game">
         <h2>Wojna karciana</h2>
-        <p>Opis gry...</p>
-        <button onclick="play('wojna')">Graj</button>
+        <input type="number" id="wojna-bet" placeholder="Kwota zakładu">
+        <button onclick="playWojna()">Graj</button>
     </div>
 
     <div id="ruletka" class="game">
         <h2>Ruletka</h2>
-        <p>Opis gry...</p>
-        <button onclick="play('ruletka')">Graj</button>
+        <input type="number" id="ruletka-bet" placeholder="Kwota zakładu">
+        <button onclick="playRuletka()">Graj</button>
     </div>
 
     <script>
+        let money = 1000000;
+
         function showGame(game) {
             const games = document.querySelectorAll('.game');
             games.forEach(g => g.style.display = 'none');
             document.getElementById(game).style.display = 'block';
         }
 
-        function play(game) {
-            alert(`Rozpoczynasz grę w ${game}!`);
-            // Tu można dodać logikę gry
+        function updateMoney() {
+            document.getElementById('money').innerText = money;
+        }
+
+        function playSlot() {
+            const result = Math.random() < 0.5 ? 1000 : -1000; // Przykładowa logika
+            money += result;
+            alert(`Wynik: ${result > 0 ? 'Wygrałeś' : 'Przegrałeś'} ${Math.abs(result)} USD`);
+            updateMoney();
+        }
+
+        function playPoker() {
+            const bet = parseInt(document.getElementById('poker-bet').value);
+            if (bet > money) {
+                alert("Nie masz wystarczającej kwoty!");
+                return;
+            }
+            money -= bet;
+            const result = Math.random() < 0.5 ? bet * 2 : 0; // Przykładowa logika
+            money += result;
+            alert(`Wynik: ${result > 0 ? 'Wygrałeś' : 'Przegrałeś'} ${Math.abs(result)} USD`);
+            updateMoney();
+        }
+
+        function playOczko() {
+            const bet = parseInt(document.getElementById('oczko-bet').value);
+            if (bet > money) {
+                alert("Nie masz wystarczającej kwoty!");
+                return;
+            }
+            money -= bet;
+            const result = Math.random() < 0.5 ? bet * 1.5 : 0; // Przykładowa logika
+            money += result;
+            alert(`Wynik: ${result > 0 ? 'Wygrałeś' : 'Przegrałeś'} ${Math.abs(result)} USD`);
+            updateMoney();
+        }
+
+        function playWojna() {
+            const bet = parseInt(document.getElementById('wojna-bet').value);
+            if (bet > money) {
+                alert("Nie masz wystarczającej kwoty!");
+                return;
+            }
+            money -= bet;
+            const result = Math.random() < 0.5 ? bet : 0; // Przykładowa logika
+            money += result;
+            alert(`Wynik: ${result > 0 ? 'Wygrałeś' : 'Przegrałeś'} ${Math.abs(result)} USD`);
+            updateMoney();
+        }
+
+        function playRuletka() {
+            const bet = parseInt(document.getElementById('ruletka-bet').value);
+            if (bet > money) {
+                alert("Nie masz wystarczającej kwoty!");
+                return;
+            }
+            money -= bet;
+            const result = Math.random() < 0.5 ? bet * 2 : 0; // Przykładowa logika
+            money += result;
+            alert(`Wynik: ${result > 0 ? 'Wygrałeś' : 'Przegrałeś'} ${Math.abs(result)} USD`);
+            updateMoney();
         }
     </script>
 
