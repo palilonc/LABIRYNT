@@ -79,6 +79,7 @@
             drawMaze();
             placePlayer();
             document.addEventListener('keydown', handleKeyPress);
+            mazeContainer.addEventListener('mousedown', startDragging);
         }
 
         function generateMaze(startRow, startCol) {
@@ -169,17 +170,49 @@
             const move = keyMap[event.key];
 
             if (move) {
-                const [newRow, newCol] = [playerPosition[0] + move[0], playerPosition[1] + move[1]];
-                if (newRow >= 0 && newRow < rows && newCol >= 0 && newCol < cols && maze[newRow][newCol] === 1) {
-                    const currentCell = mazeElement.querySelector(`[data-row="${playerPosition[0]}"][data-col="${playerPosition[1]}"]`);
-                    currentCell.classList.remove('player');
+                movePlayer(move);
+            }
+        }
 
-                    playerPosition = [newRow, newCol];
-                    placePlayer();
+        function startDragging(event) {
+            const initialPosition = { x: event.clientX, y: event.clientY };
+            const mouseMoveHandler = (moveEvent) => {
+                const deltaX = moveEvent.clientX - initialPosition.x;
+                const deltaY = moveEvent.clientY - initialPosition.y;
 
-                    if (newRow === rows - 2 && newCol === cols - 2) {
-                        alert('Gratulacje! Osiągnąłeś wyjście!');
+                const threshold = 50; // Minimalny ruch do przesunięcia
+                if (Math.abs(deltaX) > threshold || Math.abs(deltaY) > threshold) {
+                    const directionX = Math.abs(deltaX) > Math.abs(deltaY) ? (deltaX > 0 ? 1 : -1) : 0;
+                    const directionY = Math.abs(deltaY) > Math.abs(deltaX) ? (deltaY > 0 ? 1 : -1) : 0;
+
+                    if (directionX !== 0 || directionY !== 0) {
+                        movePlayer([directionY, directionX]); // Zmieniamy kolejność, aby zachować właściwy ruch
+                        initialPosition.x = moveEvent.clientX;
+                        initialPosition.y = moveEvent.clientY;
                     }
+                }
+            };
+
+            const mouseUpHandler = () => {
+                document.removeEventListener('mousemove', mouseMoveHandler);
+                document.removeEventListener('mouseup', mouseUpHandler);
+            };
+
+            document.addEventListener('mousemove', mouseMoveHandler);
+            document.addEventListener('mouseup', mouseUpHandler);
+        }
+
+        function movePlayer(move) {
+            const [newRow, newCol] = [playerPosition[0] + move[0], playerPosition[1] + move[1]];
+            if (newRow >= 0 && newRow < rows && newCol >= 0 && newCol < cols && maze[newRow][newCol] === 1) {
+                const currentCell = mazeElement.querySelector(`[data-row="${playerPosition[0]}"][data-col="${playerPosition[1]}"]`);
+                currentCell.classList.remove('player');
+
+                playerPosition = [newRow, newCol];
+                placePlayer();
+
+                if (newRow === rows - 2 && newCol === cols - 2) {
+                    alert('Gratulacje! Osiągnąłeś wyjście!');
                 }
             }
         }
