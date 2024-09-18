@@ -29,8 +29,8 @@
         .player {
             background-color: red;
         }
-        .bonus {
-            background-color: yellow;
+        button {
+            margin: 5px;
         }
     </style>
 </head>
@@ -48,9 +48,9 @@
         const mazeElement = document.getElementById('maze');
         const maze = Array.from({ length: rows }, () => Array(cols).fill(1));
         let playerPosition = [1, 1];
-        const bonuses = [];
 
         function setupMaze() {
+            // Generowanie labiryntu
             for (let i = 0; i < rows; i++) {
                 for (let j = 0; j < cols; j++) {
                     if (Math.random() < 0.3) {
@@ -60,16 +60,6 @@
             }
             maze[1][1] = 1; // Start
             maze[rows - 2][cols - 2] = 1; // Wyjście
-
-            // Dodaj losowe bonusy
-            while (bonuses.length < 10) {
-                const bonusRow = Math.floor(Math.random() * (rows - 2)) + 1;
-                const bonusCol = Math.floor(Math.random() * (cols - 2)) + 1;
-                if (maze[bonusRow][bonusCol] === 1 && (bonusRow !== 1 || bonusCol !== 1)) {
-                    bonuses.push([bonusRow, bonusCol]);
-                    maze[bonusRow][bonusCol] = 2; // Bonus
-                }
-            }
         }
 
         function drawMaze() {
@@ -81,9 +71,6 @@
                     if (i === playerPosition[0] && j === playerPosition[1]) {
                         cell.classList.add('player');
                     }
-                    if (maze[i][j] === 2) {
-                        cell.classList.add('bonus');
-                    }
                     mazeElement.appendChild(cell);
                 }
             }
@@ -92,79 +79,11 @@
         function movePlayer(direction) {
             const newRow = playerPosition[0] + direction[0];
             const newCol = playerPosition[1] + direction[1];
-            if (newRow >= 0 && newRow < rows && newCol >= 0 && newCol < cols && maze[newRow][newCol] !== 0) {
+            if (newRow >= 0 && newRow < rows && newCol >= 0 && newCol < cols && maze[newRow][newCol] === 1) {
                 playerPosition = [newRow, newCol];
                 drawMaze();
                 checkWin();
-                checkBonus();
             }
-        }
-
-        function checkBonus() {
-            const [row, col] = playerPosition;
-            if (maze[row][col] === 2) {
-                alert('Zebrałeś bonus! Najkrótsza droga do wyjścia zostanie pokazana!');
-                showShortestPath();
-            }
-        }
-
-        function showShortestPath() {
-            // Implementacja algorytmu do znalezienia najkrótszej drogi (np. BFS)
-            const path = findShortestPath(playerPosition, [rows - 2, cols - 2]);
-            if (path.length > 0) {
-                highlightPath(path);
-            }
-        }
-
-        function findShortestPath(start, end) {
-            const queue = [start];
-            const visited = new Set();
-            const paths = new Map();
-            paths.set(start.toString(), [start]);
-
-            while (queue.length > 0) {
-                const current = queue.shift();
-                const [row, col] = current;
-
-                if (current[0] === end[0] && current[1] === end[1]) {
-                    return paths.get(current.toString());
-                }
-
-                const directions = [
-                    [row - 1, col], [row + 1, col],
-                    [row, col - 1], [row, col + 1]
-                ];
-
-                for (const dir of directions) {
-                    const [newRow, newCol] = dir;
-                    if (newRow >= 0 && newRow < rows && newCol >= 0 && newCol < cols && maze[newRow][newCol] === 1 && !visited.has(dir.toString())) {
-                        visited.add(dir.toString());
-                        queue.push(dir);
-                        paths.set(dir.toString(), [...paths.get(current.toString()), dir]);
-                    }
-                }
-            }
-            return []; // Brak ścieżki
-        }
-
-        function highlightPath(path) {
-            const originalMaze = maze.map(row => row.slice());
-            for (const [row, col] of path) {
-                if (originalMaze[row][col] === 1) {
-                    maze[row][col] = 3; // Ścieżka
-                }
-            }
-            drawMaze();
-            setTimeout(() => {
-                maze.forEach((row, rIndex) => {
-                    row.forEach((cell, cIndex) => {
-                        if (cell === 3) {
-                            maze[rIndex][cIndex] = 1; // Resetuj ścieżkę
-                        }
-                    });
-                });
-                drawMaze();
-            }, 3000); // Zresetuj po 3 sekundach
         }
 
         function checkWin() {
