@@ -16,8 +16,8 @@
         #maze {
             display: grid;
             border: 2px solid #000;
-            background-color: #fff;
-            grid-template-columns: repeat(20, 20px);
+            grid-template-columns: repeat(21, 20px);
+            grid-template-rows: repeat(21, 20px);
         }
         .cell {
             width: 20px;
@@ -38,14 +38,15 @@
 <body>
     <div id="maze"></div>
     <script>
-        const rows = 20;
-        const cols = 20;
+        const rows = 21; // Większy labirynt
+        const cols = 21;
         const mazeElement = document.getElementById('maze');
         const maze = Array.from({ length: rows }, () => Array(cols).fill(0));
         const stack = [];
-        let playerPosition = [0, 0];
+        let playerPosition = [1, 1]; // Zaczynamy od pozycji (1, 1)
 
         function setupMaze() {
+            // Inicjalizuj komórki labiryntu
             for (let r = 0; r < rows; r++) {
                 for (let c = 0; c < cols; c++) {
                     const cell = document.createElement('div');
@@ -55,7 +56,7 @@
                     mazeElement.appendChild(cell);
                 }
             }
-            generateMaze(0, 0);
+            generateMaze(1, 1);
             drawMaze();
             placePlayer();
             document.addEventListener('keydown', handleKeyPress);
@@ -80,12 +81,12 @@
 
         function getUnvisitedNeighbors(row, col) {
             const neighbors = [];
-            const directions = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+            const directions = [[-2, 0], [2, 0], [0, -2], [0, 2]];
 
             directions.forEach(([dRow, dCol]) => {
                 const newRow = row + dRow;
                 const newCol = col + dCol;
-                if (newRow >= 0 && newRow < rows && newCol >= 0 && newCol < cols && maze[newRow][newCol] === 0) {
+                if (newRow > 0 && newRow < rows && newCol > 0 && newCol < cols && maze[newRow][newCol] === 0) {
                     neighbors.push([newRow, newCol]);
                 }
             });
@@ -96,7 +97,7 @@
         function removeWalls(row1, col1, row2, col2) {
             const wallRow = (row1 + row2) / 2;
             const wallCol = (col1 + col2) / 2;
-            maze[wallRow][wallCol] = 1; // Ustaw ścianę jako odwiedzoną
+            maze[wallRow][wallCol] = 1; // Ustaw ścianę jako drogę
         }
 
         function drawMaze() {
