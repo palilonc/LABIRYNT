@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wyszukiwarka Wiadomości</title>
+    <title>Wiadomości i Wyszukiwarka</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -32,49 +32,30 @@
         button:hover {
             background-color: #4cae4c;
         }
-        .results {
+        .widget {
             margin-top: 20px;
-        }
-        .news-item {
-            background: white;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            text-align: center;
         }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>Wyszukiwarka Wiadomości</h1>
+    <h1>Wiadomości i Wyszukiwarka</h1>
     <input type="text" id="search" placeholder="Wyszukaj wiadomości...">
     <button onclick="searchNews()">Szukaj</button>
 </header>
 
-<div class="results" id="results"></div>
+<div class="widget">
+    <h2>Aktualności z Google</h2>
+    <iframe src="https://news.google.com/rss/search?q=Polska&hl=pl&gl=PL&ceid=PL:pl" width="100%" height="300" frameborder="0"></iframe>
+</div>
 
 <script>
     function searchNews() {
         const query = document.getElementById('search').value;
-        const resultsDiv = document.getElementById('results');
-        resultsDiv.innerHTML = '';
-
-        // Tutaj powinna być logika do pobierania wiadomości z API
-        // Na potrzeby przykładu, dodajemy statyczne wyniki
-
-        const newsItems = [
-            { title: 'Wiadomość 1', description: 'Opis wiadomości 1' },
-            { title: 'Wiadomość 2', description: 'Opis wiadomości 2' },
-            { title: 'Wiadomość 3', description: 'Opis wiadomości 3' }
-        ];
-
-        newsItems.forEach(item => {
-            const newsItemDiv = document.createElement('div');
-            newsItemDiv.classList.add('news-item');
-            newsItemDiv.innerHTML = `<h3>${item.title}</h3><p>${item.description}</p>`;
-            resultsDiv.appendChild(newsItemDiv);
-        });
+        alert('Wyszukujesz: ' + query);
+        // Można dodać logikę do wyszukiwania wiadomości
     }
 </script>
 
