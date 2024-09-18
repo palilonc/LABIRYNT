@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Labirynt</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        #maze {
+            display: grid;
+            border: 2px solid #000;
+            background-color: #fff;
+        }
+        .cell {
+            width: 20px;
+            height: 20px;
+            border: 1px solid #000;
+        }
+        .wall {
+            background-color: #000;
+        }
+        .path {
+            background-color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div id="maze"></div>
+    <script>
+        const rows = 20;
+        const cols = 20;
+        const mazeElement = document.getElementById('maze');
+        mazeElement.style.gridTemplateColumns = `repeat(${cols}, 20px)`;
+
+        const maze = Array.from({ length: rows }, () => Array(cols).fill(0));
+        const stack = [];
+        let currentCell = [0, 0];
+
+        function setupMaze() {
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                    const cell = document.createElement('div');
+                    cell.classList.add('cell');
+                    cell.setAttribute('data-row', r);
+                    cell.setAttribute('data-col', c);
+                    mazeElement.appendChild(cell);
+                }
+            }
+            generateMaze(currentCell[0], currentCell[1]);
+        }
+
+        function generateMaze(row, col) {
+            maze[row][col] = 1; // Oznacz komórkę jako odwiedzoną
+            const neighbors = getUnvisitedNeighbors(row, col);
+
+            while (neighbors.length > 0) {
+                const [nextRow, nextCol] = neighbors.splice(Math.floor(Math.random() * neighbors.length), 1)[0];
+                removeWalls(row, col, nextRow, nextCol);
+                stack.push([row, col]);
+                currentCell = [nextRow, nextCol];
+                generateMaze(nextRow, nextCol);
+            }
+
+            if (stack.length > 0) {
+                currentCell = stack.pop();
+                generateMaze(currentCell[0], currentCell[1]);
+            }
+        }
+
+        function getUnvisitedNeighbors(row, col) {
+            const neighbors = [];
+            const directions = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+
+            directions.forEach(([dRow, dCol]) => {
+                const newRow = row + dRow;
+                const newCol = col + dCol;
+                if (newRow >= 0 && newRow < rows && newCol >= 0 && newCol < cols && maze[newRow][newCol] === 0) {
+                    neighbors.push([newRow, newCol]);
+                }
+            });
+
+            return neighbors;
+        }
+
+        function removeWalls(row1, col1, row2, col2) {
+            const wallRow = (row1 + row2) / 2;
+            const wallCol = (col1 + col2) / 2;
+            const wallCell = mazeElement.querySelector(`[data-row="${wallRow}"][data-col="${wallCol}"]`);
+            wallCell.classList.add('wall');
+        }
+
+        setupMaze();
+    </script>
+</body>
+</html>
