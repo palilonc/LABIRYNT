@@ -56,7 +56,6 @@
             maze = Array.from({ length: rows }, () => Array(cols).fill(0));
             playerPosition = [1, 1];
 
-            // Inicjalizuj komórki labiryntu
             mazeElement.innerHTML = '';
             for (let r = 0; r < rows; r++) {
                 for (let c = 0; c < cols; c++) {
@@ -76,7 +75,7 @@
         }
 
         function generateMaze(row, col) {
-            maze[row][col] = 1; // Oznacz komórkę jako odwiedzoną
+            maze[row][col] = 1;
             const neighbors = getUnvisitedNeighbors(row, col);
 
             while (neighbors.length > 0) {
@@ -104,13 +103,13 @@
         function removeWalls(row1, col1, row2, col2) {
             const wallRow = (row1 + row2) / 2;
             const wallCol = (col1 + col2) / 2;
-            maze[wallRow][wallCol] = 1; // Ustaw ścianę jako drogę
+            maze[wallRow][wallCol] = 1;
         }
 
         function placeExit() {
             const exitRow = rows - 2;
             const exitCol = cols - 2;
-            maze[exitRow][exitCol] = 1; // Ustaw wyjście
+            maze[exitRow][exitCol] = 1; 
             const exitCell = mazeElement.querySelector(`[data-row="${exitRow}"][data-col="${exitCol}"]`);
             exitCell.classList.add('exit');
         }
@@ -150,7 +149,6 @@
                     playerPosition = [newRow, newCol];
                     placePlayer();
 
-                    // Sprawdź, czy osiągnięto wyjście
                     if (newRow === rows - 2 && newCol === cols - 2) {
                         alert('Gratulacje! Osiągnąłeś wyjście!');
                     }
