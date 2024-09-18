@@ -211,6 +211,8 @@
                 playerPosition = [newRow, newCol];
                 placePlayer();
 
+                centerPlayer(); // Dodano centrowanie po ruchu
+
                 if (newRow === rows - 2 && newCol === cols - 2) {
                     alert('Gratulacje! Osiągnąłeś wyjście!');
                 }
