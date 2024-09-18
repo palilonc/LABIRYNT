@@ -22,12 +22,12 @@
         }
         #maze {
             display: grid;
-            grid-template-columns: repeat(180, 45px);
-            grid-template-rows: repeat(85, 45px);
+            grid-template-columns: repeat(20, 30px);
+            grid-template-rows: repeat(20, 30px);
         }
         .cell {
-            width: 45px;
-            height: 45px;
+            width: 30px;
+            height: 30px;
             border: 1px solid #000;
         }
         .wall {
@@ -42,9 +42,6 @@
         .exit {
             background-color: green;
         }
-        .enemy {
-            background-color: blue;
-        }
     </style>
 </head>
 <body>
@@ -53,19 +50,18 @@
         <div id="maze"></div>
     </div>
     <script>
-        const rows = 85;
-        const cols = 180;
+        const rows = 20;
+        const cols = 20;
         const mazeElement = document.getElementById('maze');
         const mazeContainer = document.getElementById('mazeContainer');
         const newMazeButton = document.getElementById('newMazeButton');
-        let maze, playerPosition, enemies = [];
+        let maze, playerPosition;
 
         newMazeButton.addEventListener('click', setupMaze);
 
         function setupMaze() {
             maze = Array.from({ length: rows }, () => Array(cols).fill(0));
             playerPosition = [1, 1];
-            enemies = [];
 
             mazeElement.innerHTML = '';
             for (let r = 0; r < rows; r++) {
@@ -82,10 +78,7 @@
             placeExit();
             drawMaze();
             placePlayer();
-            placeEnemies(4); // Dodajemy 4 wrogów
             document.addEventListener('keydown', handleKeyPress);
-            mazeContainer.addEventListener('mousedown', startDragging);
-            moveEnemies(); // Rozpocznij ruch wrogów
         }
 
         function generateMaze(startRow, startCol) {
@@ -129,11 +122,19 @@
         }
 
         function placeExit() {
-            const exitRow = rows - 2;
-            const exitCol = cols - 2;
+            const exitRow = Math.floor(rows / 2);
+            const exitCol = Math.floor(cols / 2);
             maze[exitRow][exitCol] = 1;
             const exitCell = mazeElement.querySelector(`[data-row="${exitRow}"][data-col="${exitCol}"]`);
             exitCell.classList.add('exit');
+
+            // Tworzenie czterech dróg prowadzących do wyjścia
+            for (let i = 1; i <= 4; i++) {
+                const dir = i * 2 - 1;
+                const newRow = exitRow + (dir === 1 ? -1 : dir === 3 ? 1 : 0);
+                const newCol = exitCol + (dir === 2 ? -1 : dir === 4 ? 1 : 0);
+                maze[newRow][newCol] = 1;
+            }
         }
 
         function drawMaze() {
@@ -180,34 +181,6 @@
             }
         }
 
-        function startDragging(event) {
-            const initialPosition = { x: event.clientX, y: event.clientY };
-            const mouseMoveHandler = (moveEvent) => {
-                const deltaX = moveEvent.clientX - initialPosition.x;
-                const deltaY = moveEvent.clientY - initialPosition.y;
-
-                const threshold = 50;
-                if (Math.abs(deltaX) > threshold || Math.abs(deltaY) > threshold) {
-                    const directionX = Math.abs(deltaX) > Math.abs(deltaY) ? (deltaX > 0 ? 1 : -1) : 0;
-                    const directionY = Math.abs(deltaY) > Math.abs(deltaX) ? (deltaY > 0 ? 1 : -1) : 0;
-
-                    if (directionX !== 0 || directionY !== 0) {
-                        movePlayer([directionY, directionX]);
-                        initialPosition.x = moveEvent.clientX;
-                        initialPosition.y = moveEvent.clientY;
-                    }
-                }
-            };
-
-            const mouseUpHandler = () => {
-                document.removeEventListener('mousemove', mouseMoveHandler);
-                document.removeEventListener('mouseup', mouseUpHandler);
-            };
-
-            document.addEventListener('mousemove', mouseMoveHandler);
-            document.addEventListener('mouseup', mouseUpHandler);
-        }
-
         function movePlayer(move) {
             const [newRow, newCol] = [playerPosition[0] + move[0], playerPosition[1] + move[1]];
             if (newRow >= 0 && newRow < rows && newCol >= 0 && newCol < cols && maze[newRow][newCol] === 1) {
@@ -217,78 +190,10 @@
                 playerPosition = [newRow, newCol];
                 placePlayer();
 
-                centerPlayer();
-
-                if (newRow === rows - 2 && newCol === cols - 2) {
+                if (newRow === Math.floor(rows / 2) && newCol === Math.floor(cols / 2)) {
                     alert('Gratulacje! Osiągnąłeś wyjście!');
                 }
-
-                checkEnemyCollision();
             }
-        }
-
-        function placeEnemies(count) {
-            while (enemies.length < count) {
-                const enemyRow = Math.floor(Math.random() * rows);
-                const enemyCol = Math.floor(Math.random() * cols);
-                if (maze[enemyRow][enemyCol] === 1 && !(enemyRow === playerPosition[0] && enemyCol === playerPosition[1])) {
-                    enemies.push([enemyRow, enemyCol]);
-                }
-            }
-            drawEnemies();
-        }
-
-        function drawEnemies() {
-            enemies.forEach(([row, col]) => {
-                const enemyCell = mazeElement.querySelector(`[data-row="${row}"][data-col="${col}"]`);
-                enemyCell.classList.add('enemy');
-            });
-        }
-
-        function moveEnemies() {
-            enemies.forEach((enemy, index) => {
-                const [row, col] = enemy;
-                const possibleMoves = getEnemyMoves(row, col);
-
-                if (possibleMoves.length > 0) {
-                    const [newRow, newCol] = possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
-                    enemies[index] = [newRow, newCol];
-
-                    const enemyCell = mazeElement.querySelector(`[data-row="${row}"][data-col="${col}"]`);
-                    enemyCell.classList.remove('enemy');
-
-                    const newEnemyCell = mazeElement.querySelector(`[data-row="${newRow}"][data-col="${newCol}"]`);
-                    newEnemyCell.classList.add('enemy');
-                }
-            });
-
-            checkEnemyCollision();
-
-            setTimeout(moveEnemies, 1000); // Ruch wrogów co 1 sekundę
-        }
-
-        function getEnemyMoves(row, col) {
-            const moves = [];
-            const directions = [[-1, 0], [1, 0], [0, -1], [0, 1]];
-
-            directions.forEach(([dRow, dCol]) => {
-                const newRow = row + dRow;
-                const newCol = col + dCol;
-                if (newRow >= 0 && newRow < rows && newCol >= 0 && newCol < cols && maze[newRow][newCol] === 1) {
-                    moves.push([newRow, newCol]);
-                }
-            });
-
-            return moves;
-        }
-
-        function checkEnemyCollision() {
-            enemies.forEach(([row, col]) => {
-                if (row === playerPosition[0] && col === playerPosition[1]) {
-                    alert('Złapano! Spróbuj ponownie.');
-                    setupMaze(); // Resetuj labirynt
-                }
-            });
         }
 
         setupMaze(); // Generuj pierwszy labirynt na starcie
