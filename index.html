@@ -13,20 +13,17 @@
             padding: 20px;
             background-color: #f0f0f0;
         }
-
         form {
             display: flex;
             justify-content: center;
             margin: 20px;
         }
-
         input[type="text"] {
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 4px;
             width: 300px; /* Dostosuj szerokość */
         }
-
         input[type="submit"] {
             padding: 10px;
             background-color: #4285f4; /* Kolor Google */
@@ -36,11 +33,9 @@
             cursor: pointer;
             margin-left: 5px;
         }
-
         input[type="submit"]:hover {
             background-color: #357ae8; /* Mroczniejszy kolor na hover */
         }
-
         #newsContainer {
             width: 100%;
             max-width: 800px;
@@ -49,16 +44,13 @@
             padding: 10px;
             background-color: #fff;
         }
-
         .news-item {
             margin: 10px 0;
         }
-
         .news-item a {
             text-decoration: none;
             color: #4285f4;
         }
-
         .news-item a:hover {
             text-decoration: underline;
         }
@@ -70,7 +62,6 @@
         <input type="text" id="searchQuery" placeholder="Szukaj w Google News" required>
         <input type="submit" value="Szukaj">
     </form>
-
     <h2>Aktualności</h2>
     <div id="newsContainer"></div>
 
@@ -78,9 +69,18 @@
         async function fetchNews() {
             const query = document.getElementById('searchQuery').value;
             const url = `https://news.google.com/rss/search?q=${encodeURIComponent(query)}&hl=pl&gl=PL&ceid=PL:pl`;
-            const response = await fetch(url);
-            const data = await response.text();
-            displayNews(data);
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const data = await response.text();
+                displayNews(data);
+            } catch (error) {
+                console.error('Wystąpił błąd:', error);
+                document.getElementById('newsContainer').innerHTML = 'Nie udało się pobrać wiadomości.';
+            }
             return false; // Zapobiega przeładowaniu strony
         }
 
