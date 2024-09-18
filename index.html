@@ -40,15 +40,10 @@
             background-color: red;
         }
         .exit {
+            background-color: orange; /* Kolor wyjścia */
             position: relative;
-            background-color: transparent;
-        }
-        .exit img {
-            width: 150px; /* 10x15px dla 10x10 kratek */
-            height: 150px;
-            position: absolute;
-            top: -75px; /* Wyśrodkowanie */
-            left: -75px; /* Wyśrodkowanie */
+            grid-column: span 10; /* 10 kolumn */
+            grid-row: span 10;    /* 10 wierszy */
         }
     </style>
 </head>
@@ -130,26 +125,18 @@
         }
 
         function placeExit() {
-            const exitRow = Math.floor(rows / 2);
-            const exitCol = Math.floor(cols / 2);
-            maze[exitRow][exitCol] = 1;
+            const exitRow = Math.floor(rows / 2) - 5; // Wyśrodkowanie wyjścia
+            const exitCol = Math.floor(cols / 2) - 5;
 
-            // Tworzenie wyjścia 10x10
-            for (let r = -5; r <= 4; r++) {
-                for (let c = -5; c <= 4; c++) {
-                    if (Math.abs(r) === 5 || Math.abs(c) === 5) {
-                        maze[exitRow + r][exitCol + c] = 1;
-                    }
+            // Ustawienie kolumn i wierszy dla wyjścia
+            for (let r = 0; r < 10; r++) {
+                for (let c = 0; c < 10; c++) {
+                    maze[exitRow + r][exitCol + c] = 1;
                 }
             }
 
             const exitCell = mazeElement.querySelector(`[data-row="${exitRow}"][data-col="${exitCol}"]`);
             exitCell.classList.add('exit');
-
-            // Dodanie obrazka wrót
-            const img = document.createElement('img');
-            img.src = 'path/to/your/image.png'; // Zmień na ścieżkę do swojego obrazka
-            exitCell.appendChild(img);
         }
 
         function drawMaze() {
@@ -205,7 +192,9 @@
                 playerPosition = [newRow, newCol];
                 placePlayer();
 
-                if (newRow === Math.floor(rows / 2) && newCol === Math.floor(cols / 2)) {
+                // Sprawdzenie, czy gracz dotarł do wyjścia
+                if (newRow >= Math.floor(rows / 2) - 5 && newRow < Math.floor(rows / 2) + 5 &&
+                    newCol >= Math.floor(cols / 2) - 5 && newCol < Math.floor(cols / 2) + 5) {
                     alert('Gratulacje! Osiągnąłeś wyjście!');
                 }
             }
