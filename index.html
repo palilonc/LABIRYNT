@@ -3,96 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RAPERROSHOP.PL</title>
+    <title>Kasino Wakacyjne</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
-        header {
-            background: #333;
-            color: #fff;
-            padding: 10px 0;
+            background-color: #f0f0f0;
             text-align: center;
         }
-        nav {
-            margin: 20px 0;
+        .menu {
+            margin: 20px;
         }
-        nav a {
-            margin: 0 15px;
-            color: #333;
-            text-decoration: none;
+        .game {
+            display: none;
         }
-        .container {
-            width: 80%;
-            margin: 0 auto;
-        }
-        .product {
-            background: #fff;
-            border: 1px solid #ddd;
-            margin: 15px 0;
-            padding: 15px;
-            text-align: center;
-        }
-        .product img {
-            max-width: 100%;
-            height: auto;
-        }
-        footer {
-            text-align: center;
-            padding: 20px 0;
-            background: #333;
-            color: #fff;
-            position: relative;
-            bottom: 0;
-            width: 100%;
+        #initial-money {
+            margin: 20px;
         }
     </style>
 </head>
 <body>
 
-<header>
-    <h1>RAPERROSHOP.PL</h1>
-    <nav>
-        <a href="#">Strona Główna</a>
-        <a href="#">Produkty</a>
-        <a href="#">Kontakt</a>
-    </nav>
-</header>
+    <h1>Kasino Wakacyjne</h1>
+    <audio controls autoplay loop>
+        <source src="muzyka_wakacyjna.mp3" type="audio/mpeg">
+        Twój przeglądarka nie obsługuje odtwarzania audio.
+    </audio>
 
-<div class="container">
-    <h2>Nasze Produkty</h2>
-
-    <div class="product">
-        <h3>Produkt 1</h3>
-        <img src="https://github.com/palilonc/LABIRYNT/blob/master/images.jpeg?raw=true">
-        <img src="https://github.com/palilonc/LABIRYNT/blob/master/images%20(1).jpeg?raw=true">
-        <img src="https://github.com/palilonc/LABIRYNT/blob/master/images%20(2).jpeg?raw=true">
-        <img src="https://github.com/palilonc/LABIRYNT/blob/master/images%20(3).jpeg?raw=true">    
-        <p>Cena: 349,99 zł</p>
-        <button>Kup Teraz</button>
+    <div id="initial-money">
+        <h2>Twoje pieniądze: <span id="money">1000000</span> USD</h2>
     </div>
 
-    <div class="product">
-        <h3>Produkt 2</h3>
-        <img src="https://via.placeholder.com/150" alt="Produkt 2">
-        <p>Cena: 199,99 zł</p>
-        <button>Kup Teraz</button>
+    <div class="menu">
+        <button onclick="showGame('slot')">Jednoręki bandyta</button>
+        <button onclick="showGame('poker')">Poker</button>
+        <button onclick="showGame('oczko')">Oczko</button>
+        <button onclick="showGame('wojna')">Wojna karciana</button>
+        <button onclick="showGame('ruletka')">Ruletka</button>
     </div>
 
-    <div class="product">
-        <h3>Produkt 3</h3>
-        <img src="https://via.placeholder.com/150" alt="Produkt 3">
-        <p>Cena: 299,99 zł</p>
-        <button>Kup Teraz</button>
+    <div id="slot" class="game">
+        <h2>Jednoręki bandyta</h2>
+        <p>Opis gry...</p>
+        <button onclick="play('slot')">Graj</button>
     </div>
-</div>
 
-<footer>
-    <p>© 2024 Sklep Internetowy</p>
-</footer>
+    <div id="poker" class="game">
+        <h2>Poker</h2>
+        <p>Opis gry...</p>
+        <button onclick="play('poker')">Graj</button>
+    </div>
+
+    <div id="oczko" class="game">
+        <h2>Oczko</h2>
+        <p>Opis gry...</p>
+        <button onclick="play('oczko')">Graj</button>
+    </div>
+
+    <div id="wojna" class="game">
+        <h2>Wojna karciana</h2>
+        <p>Opis gry...</p>
+        <button onclick="play('wojna')">Graj</button>
+    </div>
+
+    <div id="ruletka" class="game">
+        <h2>Ruletka</h2>
+        <p>Opis gry...</p>
+        <button onclick="play('ruletka')">Graj</button>
+    </div>
+
+    <script>
+        function showGame(game) {
+            const games = document.querySelectorAll('.game');
+            games.forEach(g => g.style.display = 'none');
+            document.getElementById(game).style.display = 'block';
+        }
+
+        function play(game) {
+            alert(`Rozpoczynasz grę w ${game}!`);
+            // Tu można dodać logikę gry
+        }
+    </script>
 
 </body>
 </html>
