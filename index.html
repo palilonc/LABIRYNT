@@ -7,6 +7,7 @@
     <style>
         body {
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
@@ -18,6 +19,7 @@
             border: 2px solid #000;
             grid-template-columns: repeat(21, 20px);
             grid-template-rows: repeat(21, 20px);
+            margin-bottom: 20px;
         }
         .cell {
             width: 20px;
@@ -33,20 +35,29 @@
         .player {
             background-color: red;
         }
+        .exit {
+            background-color: green;
+        }
     </style>
 </head>
 <body>
+    <button id="newMazeButton">Nowy Labirynt</button>
     <div id="maze"></div>
     <script>
-        const rows = 21; // Większy labirynt
+        const rows = 21;
         const cols = 21;
         const mazeElement = document.getElementById('maze');
-        const maze = Array.from({ length: rows }, () => Array(cols).fill(0));
-        const stack = [];
-        let playerPosition = [1, 1]; // Zaczynamy od pozycji (1, 1)
+        const newMazeButton = document.getElementById('newMazeButton');
+        let maze, playerPosition;
+
+        newMazeButton.addEventListener('click', setupMaze);
 
         function setupMaze() {
+            maze = Array.from({ length: rows }, () => Array(cols).fill(0));
+            playerPosition = [1, 1];
+
             // Inicjalizuj komórki labiryntu
+            mazeElement.innerHTML = '';
             for (let r = 0; r < rows; r++) {
                 for (let c = 0; c < cols; c++) {
                     const cell = document.createElement('div');
@@ -56,7 +67,9 @@
                     mazeElement.appendChild(cell);
                 }
             }
+
             generateMaze(1, 1);
+            placeExit();
             drawMaze();
             placePlayer();
             document.addEventListener('keydown', handleKeyPress);
@@ -69,13 +82,7 @@
             while (neighbors.length > 0) {
                 const [nextRow, nextCol] = neighbors.splice(Math.floor(Math.random() * neighbors.length), 1)[0];
                 removeWalls(row, col, nextRow, nextCol);
-                stack.push([row, col]);
                 generateMaze(nextRow, nextCol);
-            }
-
-            if (stack.length > 0) {
-                const [prevRow, prevCol] = stack.pop();
-                generateMaze(prevRow, prevCol);
             }
         }
 
@@ -98,6 +105,14 @@
             const wallRow = (row1 + row2) / 2;
             const wallCol = (col1 + col2) / 2;
             maze[wallRow][wallCol] = 1; // Ustaw ścianę jako drogę
+        }
+
+        function placeExit() {
+            const exitRow = rows - 2;
+            const exitCol = cols - 2;
+            maze[exitRow][exitCol] = 1; // Ustaw wyjście
+            const exitCell = mazeElement.querySelector(`[data-row="${exitRow}"][data-col="${exitCol}"]`);
+            exitCell.classList.add('exit');
         }
 
         function drawMaze() {
@@ -134,11 +149,16 @@
 
                     playerPosition = [newRow, newCol];
                     placePlayer();
+
+                    // Sprawdź, czy osiągnięto wyjście
+                    if (newRow === rows - 2 && newCol === cols - 2) {
+                        alert('Gratulacje! Osiągnąłeś wyjście!');
+                    }
                 }
             }
         }
 
-        setupMaze();
+        setupMaze(); // Generuj pierwszy labirynt na starcie
     </script>
 </body>
 </html>
