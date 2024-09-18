@@ -41,9 +41,11 @@
         }
         .exit {
             background-color: orange; /* Kolor wyjścia */
-            position: relative;
-            grid-column: span 10; /* 10 kolumn */
-            grid-row: span 10;    /* 10 wierszy */
+            position: absolute;
+            top: calc(50% - 75px); /* Wyśrodkowanie w pionie */
+            left: calc(50% - 75px); /* Wyśrodkowanie w poziomie */
+            width: 150px;  /* 10 kratki szerokości */
+            height: 150px; /* 10 kratki wysokości */
         }
     </style>
 </head>
@@ -51,6 +53,7 @@
     <button id="newMazeButton">Nowy Labirynt</button>
     <div id="mazeContainer">
         <div id="maze"></div>
+        <div class="exit"></div> <!-- Dodanie wyjścia jako osobny element -->
     </div>
     <script>
         const rows = 85;
@@ -78,7 +81,6 @@
             }
 
             generateMaze(1, 1);
-            placeExit();
             drawMaze();
             placePlayer();
             document.addEventListener('keydown', handleKeyPress);
@@ -122,21 +124,6 @@
             const wallRow = (row1 + row2) / 2;
             const wallCol = (col1 + col2) / 2;
             maze[wallRow][wallCol] = 1;
-        }
-
-        function placeExit() {
-            const exitRow = Math.floor(rows / 2) - 5; // Wyśrodkowanie wyjścia
-            const exitCol = Math.floor(cols / 2) - 5;
-
-            // Ustawienie kolumn i wierszy dla wyjścia
-            for (let r = 0; r < 10; r++) {
-                for (let c = 0; c < 10; c++) {
-                    maze[exitRow + r][exitCol + c] = 1;
-                }
-            }
-
-            const exitCell = mazeElement.querySelector(`[data-row="${exitRow}"][data-col="${exitCol}"]`);
-            exitCell.classList.add('exit');
         }
 
         function drawMaze() {
