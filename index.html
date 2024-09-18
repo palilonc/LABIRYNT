@@ -22,12 +22,12 @@
         }
         #maze {
             display: grid;
-            grid-template-columns: repeat(20, 30px);
-            grid-template-rows: repeat(20, 30px);
+            grid-template-columns: repeat(180, 15px); /* 180 kolumn */
+            grid-template-rows: repeat(85, 15px);    /* 85 wierszy */
         }
         .cell {
-            width: 30px;
-            height: 30px;
+            width: 15px;  /* Ustawione na 15px */
+            height: 15px; /* Ustawione na 15px */
             border: 1px solid #000;
         }
         .wall {
@@ -50,8 +50,8 @@
         <div id="maze"></div>
     </div>
     <script>
-        const rows = 20;
-        const cols = 20;
+        const rows = 85;
+        const cols = 180;
         const mazeElement = document.getElementById('maze');
         const mazeContainer = document.getElementById('mazeContainer');
         const newMazeButton = document.getElementById('newMazeButton');
@@ -129,12 +129,14 @@
             exitCell.classList.add('exit');
 
             // Tworzenie czterech dróg prowadzących do wyjścia
-            for (let i = 1; i <= 4; i++) {
-                const dir = i * 2 - 1;
-                const newRow = exitRow + (dir === 1 ? -1 : dir === 3 ? 1 : 0);
-                const newCol = exitCol + (dir === 2 ? -1 : dir === 4 ? 1 : 0);
-                maze[newRow][newCol] = 1;
-            }
+            const directions = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+            directions.forEach(([dRow, dCol]) => {
+                const newRow = exitRow + dRow;
+                const newCol = exitCol + dCol;
+                if (newRow > 0 && newRow < rows && newCol > 0 && newCol < cols) {
+                    maze[newRow][newCol] = 1;
+                }
+            });
         }
 
         function drawMaze() {
