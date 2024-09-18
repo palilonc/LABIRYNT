@@ -18,6 +18,7 @@
             height: 100vh; /* Wysokość kontenera */
             overflow: auto; /* Przewijanie */
             border: 2px solid #000;
+            position: relative; /* Aby można było wycentrować gracza */
         }
         #maze {
             display: grid;
@@ -52,6 +53,7 @@
         const rows = 85; // Ustawione na 85
         const cols = 180; // Ustawione na 180
         const mazeElement = document.getElementById('maze');
+        const mazeContainer = document.getElementById('mazeContainer');
         const newMazeButton = document.getElementById('newMazeButton');
         let maze, playerPosition;
 
@@ -142,6 +144,19 @@
         function placePlayer() {
             const playerCell = mazeElement.querySelector(`[data-row="${playerPosition[0]}"][data-col="${playerPosition[1]}"]`);
             playerCell.classList.add('player');
+            centerPlayer();
+        }
+
+        function centerPlayer() {
+            const playerCell = mazeElement.querySelector(`[data-row="${playerPosition[0]}"][data-col="${playerPosition[1]}"]`);
+            const rect = playerCell.getBoundingClientRect();
+            const containerRect = mazeContainer.getBoundingClientRect();
+
+            const offsetX = rect.left - containerRect.left + rect.width / 2 - containerRect.width / 2;
+            const offsetY = rect.top - containerRect.top + rect.height / 2 - containerRect.height / 2;
+
+            mazeContainer.scrollLeft += offsetX;
+            mazeContainer.scrollTop += offsetY;
         }
 
         function handleKeyPress(event) {
