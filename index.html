@@ -3,239 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Labirynt</title>
+    <title>Wyszukiwarka Wiadomości</title>
     <style>
         body {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
+            font-family: Arial, sans-serif;
             margin: 0;
-            background-color: #f0f0f0;
+            padding: 20px;
+            background-color: #f4f4f4;
         }
-        #mazeContainer {
-            width: 100vw;
-            height: 100vh;
-            overflow: auto;
-            border: 2px solid #000;
-            position: relative;
-            margin-bottom: 20px; /* Margines dla przycisków */
+        header {
+            text-align: center;
+            margin-bottom: 20px;
         }
-        #maze {
-            display: grid;
-            grid-template-columns: repeat(180, 15px);
-            grid-template-rows: repeat(85, 15px);
+        input[type="text"] {
+            width: 80%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
         }
-        .cell {
-            width: 15px;
-            height: 15px;
-            border: 1px solid #000;
-        }
-        .wall {
-            background-color: #000;
-        }
-        .path {
-            background-color: #fff;
-        }
-        .player {
-            background-color: red;
-        }
-        .exit {
-            background-color: orange;
-            position: absolute;
-            width: 150px;  
-            height: 150px; 
-            transform: translate(-50%, -50%);
-        }
-        .controls {
-            display: flex;
-            justify-content: center;
-            margin: 10px 0;
-        }
-        .control-button {
-            width: 50px;
-            height: 50px;
-            margin: 5px;
-            background-color: #007bff;
-            color: white;
+        button {
+            padding: 10px 15px;
             border: none;
-            border-radius: 5px;
+            border-radius: 4px;
+            background-color: #5cb85c;
+            color: white;
             cursor: pointer;
-            font-size: 24px;
         }
-        .control-button:active {
-            background-color: #0056b3;
+        button:hover {
+            background-color: #4cae4c;
+        }
+        .results {
+            margin-top: 20px;
+        }
+        .news-item {
+            background: white;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
     </style>
 </head>
 <body>
-    <button id="newMazeButton">Nowy Labirynt</button>
-    <div id="mazeContainer">
-        <div id="maze"></div>
-        <div class="exit" id="exit"></div>
-    </div>
-    <div class="controls">
-        <button class="control-button" id="upButton">↑</button>
-        <div>
-            <button class="control-button" id="leftButton">←</button>
-            <button class="control-button" id="rightButton">→</button>
-        </div>
-        <button class="control-button" id="downButton">↓</button>
-    </div>
-    <script>
-        const rows = 85;
-        const cols = 180;
-        const mazeElement = document.getElementById('maze');
-        const mazeContainer = document.getElementById('mazeContainer');
-        const exitElement = document.getElementById('exit');
-        const newMazeButton = document.getElementById('newMazeButton');
-        let maze, playerPosition;
 
-        newMazeButton.addEventListener('click', setupMaze);
-        document.getElementById('upButton').addEventListener('click', () => movePlayer(0, -1));
-        document.getElementById('downButton').addEventListener('click', () => movePlayer(0, 1));
-        document.getElementById('leftButton').addEventListener('click', () => movePlayer(-1, 0));
-        document.getElementById('rightButton').addEventListener('click', () => movePlayer(1, 0));
+<header>
+    <h1>Wyszukiwarka Wiadomości</h1>
+    <input type="text" id="search" placeholder="Wyszukaj wiadomości...">
+    <button onclick="searchNews()">Szukaj</button>
+</header>
 
-        function setupMaze() {
-            maze = Array.from({ length: rows }, () => Array(cols).fill(0));
-            playerPosition = [1, 1];
+<div class="results" id="results"></div>
 
-            mazeElement.innerHTML = '';
-            for (let r = 0; r < rows; r++) {
-                for (let c = 0; c < cols; c++) {
-                    const cell = document.createElement('div');
-                    cell.classList.add('cell');
-                    cell.setAttribute('data-row', r);
-                    cell.setAttribute('data-col', c);
-                    mazeElement.appendChild(cell);
-                }
-            }
+<script>
+    function searchNews() {
+        const query = document.getElementById('search').value;
+        const resultsDiv = document.getElementById('results');
+        resultsDiv.innerHTML = '';
 
-            generateMaze(1, 1);
-            placeExit();
-            drawMaze();
-            placePlayer();
-            document.addEventListener('keydown', handleKeyPress);
-        }
+        // Tutaj powinna być logika do pobierania wiadomości z API
+        // Na potrzeby przykładu, dodajemy statyczne wyniki
 
-        function movePlayer(dx, dy) {
-            const newRow = playerPosition[0] + dy;
-            const newCol = playerPosition[1] + dx;
-            if (newRow >= 0 && newRow < rows && newCol >= 0 && newCol < cols && maze[newRow][newCol] === 1) {
-                moveToCell(newRow, newCol);
-            }
-        }
+        const newsItems = [
+            { title: 'Wiadomość 1', description: 'Opis wiadomości 1' },
+            { title: 'Wiadomość 2', description: 'Opis wiadomości 2' },
+            { title: 'Wiadomość 3', description: 'Opis wiadomości 3' }
+        ];
 
-        function moveToCell(row, col) {
-            const currentCell = mazeElement.querySelector(`[data-row="${playerPosition[0]}"][data-col="${playerPosition[1]}"]`);
-            currentCell.classList.remove('player');
+        newsItems.forEach(item => {
+            const newsItemDiv = document.createElement('div');
+            newsItemDiv.classList.add('news-item');
+            newsItemDiv.innerHTML = `<h3>${item.title}</h3><p>${item.description}</p>`;
+            resultsDiv.appendChild(newsItemDiv);
+        });
+    }
+</script>
 
-            playerPosition = [row, col];
-            placePlayer();
-            centerPlayer();
-
-            const exitRow = Math.floor(rows / 2);
-            const exitCol = Math.floor(cols / 2);
-            if (row === exitRow && col === exitCol) {
-                alert('Gratulacje! Osiągnąłeś wyjście!');
-            }
-        }
-
-        function generateMaze(startRow, startCol) {
-            const stack = [[startRow, startCol]];
-            maze[startRow][startCol] = 1;
-
-            while (stack.length > 0) {
-                const [row, col] = stack[stack.length - 1];
-                const neighbors = getUnvisitedNeighbors(row, col);
-
-                if (neighbors.length > 0) {
-                    const [nextRow, nextCol] = neighbors[Math.floor(Math.random() * neighbors.length)];
-                    removeWalls(row, col, nextRow, nextCol);
-                    maze[nextRow][nextCol] = 1;
-                    stack.push([nextRow, nextCol]);
-                } else {
-                    stack.pop();
-                }
-            }
-        }
-
-        function getUnvisitedNeighbors(row, col) {
-            const neighbors = [];
-            const directions = [[-2, 0], [2, 0], [0, -2], [0, 2]];
-
-            directions.forEach(([dRow, dCol]) => {
-                const newRow = row + dRow;
-                const newCol = col + dCol;
-                if (newRow > 0 && newRow < rows && newCol > 0 && newCol < cols && maze[newRow][newCol] === 0) {
-                    neighbors.push([newRow, newCol]);
-                }
-            });
-
-            return neighbors;
-        }
-
-        function removeWalls(row1, col1, row2, col2) {
-            const wallRow = (row1 + row2) / 2;
-            const wallCol = (col1 + col2) / 2;
-            maze[wallRow][wallCol] = 1;
-        }
-
-        function placeExit() {
-            const exitRow = Math.floor(rows / 2);
-            const exitCol = Math.floor(cols / 2);
-            maze[exitRow][exitCol] = 1;
-
-            exitElement.style.top = `${(exitRow * 15) + 7.5}px`;
-            exitElement.style.left = `${(exitCol * 15) + 7.5}px`;
-        }
-
-        function drawMaze() {
-            mazeElement.childNodes.forEach((cell, index) => {
-                const row = Math.floor(index / cols);
-                const col = index % cols;
-                if (maze[row][col] === 0) {
-                    cell.classList.add('wall');
-                } else {
-                    cell.classList.add('path');
-                }
-            });
-        }
-
-        function placePlayer() {
-            const playerCell = mazeElement.querySelector(`[data-row="${playerPosition[0]}"][data-col="${playerPosition[1]}"]`);
-            playerCell.classList.add('player');
-            centerPlayer();
-        }
-
-        function centerPlayer() {
-            const playerCell = mazeElement.querySelector(`[data-row="${playerPosition[0]}"][data-col="${playerPosition[1]}"]`);
-            const rect = playerCell.getBoundingClientRect();
-            const containerRect = mazeContainer.getBoundingClientRect();
-
-            const offsetX = rect.left - containerRect.left + rect.width / 2 - containerRect.width / 2;
-            const offsetY = rect.top - containerRect.top + rect.height / 2 - containerRect.height / 2;
-
-            mazeContainer.scrollLeft += offsetX;
-            mazeContainer.scrollTop += offsetY;
-        }
-
-        function handleKeyPress(event) {
-            const keyMap = {
-                ArrowUp: [0, -1],
-                ArrowDown: [0, 1],
-                ArrowLeft: [-1, 0],
-                ArrowRight: [1, 0]
-            };
-            const move = keyMap[event.key];
-
-            if (move) {
-                movePlayer(move[0], move[1]);
-            }
-        }
-
-        setupMaze(); // Generuj pierwszy labirynt na starcie
-    </script>
 </body>
 </html>
