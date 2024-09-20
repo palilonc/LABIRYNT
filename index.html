@@ -154,7 +154,7 @@
         <div id="result-container"></div>
     </div>
 
-    <button id="start-button">Start Gry</button> <!-- Guzik startu gry -->
+    <button id="start-button">Start Gry</button>
 
     <audio id="background-music" src="https://github.com/palilonc/milonerzy/raw/refs/heads/main/Theme%20Contestants%20-%20Who%20Wants%20to%20Be%20a%20Millionaire_.mp3" preload="auto"></audio>
 
@@ -269,14 +269,28 @@
             "500 zł"
         ];
 
+        const prizeList = [
+            "1 000 000 zł",
+            "500 000 zł",
+            "250 000 zł",
+            "125 000 zł",
+            "75 000 zł",
+            "40 000 zł",
+            "20 000 zł",
+            "10 000 zł",
+            "5 000 zł",
+            "2 000 zł",
+            "1 000 zł",
+            "500 zł"
+        ];
+
         let currentQuestionIndex = 0;
         let score = 0;
-        let scoreboard = [];
         const backgroundMusic = document.getElementById('background-music');
 
         document.getElementById('start-button').addEventListener('click', function() {
             startQuiz();
-            backgroundMusic.play(); // Odtwórz muzykę po starcie gry
+            backgroundMusic.play();
         });
 
         function startQuiz() {
@@ -287,9 +301,9 @@
             document.getElementById('quit-button').style.display = 'inline-block';
             document.getElementById('question-container').style.display = 'block';
             document.getElementById('result-container').style.display = 'none';
-            document.getElementById('start-button').style.display = 'none'; // Ukryj przycisk startu
-            shuffleQuestions(); // Losowanie pytań
-            highlightPrize(); // Zaznacz pierwszą nagrodę
+            document.getElementById('start-button').style.display = 'none';
+            shuffleQuestions();
+            highlightPrize();
             showQuestion();
         }
 
@@ -301,7 +315,7 @@
         }
 
         function showQuestion() {
-            if (currentQuestionIndex < prizeList.length) { // Gra kończy się po 12 pytaniach
+            if (currentQuestionIndex < prizeList.length) {
                 const question = questions[currentQuestionIndex];
                 document.querySelector('.question').innerText = question.question;
                 const answersContainer = document.querySelector('.answers');
@@ -337,6 +351,8 @@
             document.getElementById('quit-button').style.display = 'none';
             document.getElementById('scoreboard-container').style.display = 'block';
             backgroundMusic.pause();
+            saveScore();
+            displayScoreboard();
         }
 
         function highlightPrize() {
@@ -349,18 +365,20 @@
             });
         }
 
-        document.getElementById('save-score-button').addEventListener('click', function() {
+        function saveScore() {
             const playerName = document.getElementById('name-input').value;
             if (playerName) {
+                const scoreboard = JSON.parse(localStorage.getItem('scoreboard')) || [];
                 scoreboard.push({ name: playerName, score: score });
-                updateScoreboard();
+                localStorage.setItem('scoreboard', JSON.stringify(scoreboard));
                 document.getElementById('name-input').value = ''; // Wyczyść pole
             }
-        });
+        }
 
-        function updateScoreboard() {
+        function displayScoreboard() {
             const scoreboardBody = document.getElementById('scoreboard-body');
             scoreboardBody.innerHTML = '';
+            const scoreboard = JSON.parse(localStorage.getItem('scoreboard')) || [];
             scoreboard.forEach(entry => {
                 const row = document.createElement('tr');
                 const nameCell = document.createElement('td');
@@ -373,10 +391,14 @@
             });
         }
 
+        document.getElementById('save-score-button').addEventListener('click', saveScore);
         document.getElementById('quit-button').addEventListener('click', endQuiz);
 
         backgroundMusic.volume = 0.5;
         backgroundMusic.loop = true;
+
+        // Wyświetl tabelę wyników przy załadowaniu strony
+        displayScoreboard();
     </script>
 </body>
 </html>
