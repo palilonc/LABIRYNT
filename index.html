@@ -22,6 +22,7 @@
             max-width: 800px;
             margin: auto;
             text-align: center;
+            color: white;
             display: flex;
             justify-content: space-between;
         }
@@ -98,6 +99,11 @@
             color: yellow;
         }
 
+        .guaranteed {
+            color: limegreen;
+            font-weight: bold;
+        }
+
         #scoreboard-container {
             margin-top: 20px;
         }
@@ -131,17 +137,17 @@
 <body>
     <div id="quiz-container">
         <ul id="prizes-list">
-            <li>1 000 000 zł</li>
+            <li class="guaranteed">1 000 000 zł</li>
             <li>500 000 zł</li>
             <li>250 000 zł</li>
-            <li>125 000 zł</li>
+            <li class="guaranteed">125 000 zł</li>
             <li>75 000 zł</li>
-            <li>40 000 zł</li>
+            <li class="guaranteed">40 000 zł</li>
             <li>20 000 zł</li>
             <li>10 000 zł</li>
             <li>5 000 zł</li>
             <li>2 000 zł</li>
-            <li>1 000 zł</li>
+            <li class="guaranteed">1 000 zł</li>
             <li>500 zł</li>
         </ul>
         <div id="question-container" style="display: none;">
@@ -198,7 +204,7 @@
 
         let currentQuestionIndex = 0;
         let score = 0;
-        let scoreboard = JSON.parse(localStorage.getItem('scoreboard')) || [];
+        let scoreboard = [];
         const backgroundMusic = document.getElementById('background-music');
 
         document.getElementById('start-button').addEventListener('click', function() {
@@ -281,7 +287,7 @@
             const playerName = document.getElementById('name-input').value;
             if (playerName) {
                 scoreboard.push({ name: playerName, score: score });
-                localStorage.setItem('scoreboard', JSON.stringify(scoreboard)); // Zapisz wyniki w localStorage
+                localStorage.setItem('scoreboard', JSON.stringify(scoreboard));
                 updateScoreboard();
                 document.getElementById('name-input').value = ''; // Wyczyść pole
             }
@@ -304,16 +310,11 @@
 
         // Załaduj tablicę wyników przy starcie
         function loadScoreboard() {
-            scoreboard.forEach(entry => {
-                const row = document.createElement('tr');
-                const nameCell = document.createElement('td');
-                const scoreCell = document.createElement('td');
-                nameCell.innerText = entry.name;
-                scoreCell.innerText = entry.score;
-                row.appendChild(nameCell);
-                row.appendChild(scoreCell);
-                document.getElementById('scoreboard-body').appendChild(row);
-            });
+            const storedScoreboard = localStorage.getItem('scoreboard');
+            if (storedScoreboard) {
+                scoreboard = JSON.parse(storedScoreboard);
+                updateScoreboard();
+            }
         }
 
         document.getElementById('quit-button').addEventListener('click', endQuiz);
