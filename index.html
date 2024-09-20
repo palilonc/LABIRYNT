@@ -76,7 +76,7 @@
         }
 
         #prizes-list {
-            font-size: 20px;
+            font-size: 30px; /* Większe kwoty */
             list-style: none;
             padding: 0;
             text-align: right;
@@ -85,10 +85,13 @@
 
         #prizes-list li {
             margin-bottom: 10px;
+            color: gold; /* Kolor kwot */
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
         }
 
         .highlight {
             color: yellow;
+            font-size: 35px; /* Powiększenie podświetlonej kwoty */
         }
 
         #scoreboard-container {
@@ -130,6 +133,11 @@
     </style>
 </head>
 <body>
+    <audio id="background-music" loop>
+        <source src="your_music_file.mp3" type="audio/mpeg"> <!-- Wstaw ścieżkę do pliku muzycznego -->
+        Your browser does not support the audio element.
+    </audio>
+
     <div id="quiz-container">
         <ul id="prizes-list">
             <li>1 000 000 zł</li>
@@ -222,6 +230,7 @@
             shuffleQuestions();
             highlightPrize();
             showQuestion();
+            document.getElementById('background-music').play(); // Uruchom muzykę w tle
             updateTopScores();
         }
 
@@ -244,19 +253,18 @@
                     button.onclick = () => selectAnswer(index);
                     answersContainer.appendChild(button);
                 });
-                document.getElementById('top-scores').style.display = 'block'; // Pokaż najlepsze wyniki
+                document.getElementById('stake-container').innerHTML = `Stawka: ${prizeList[prizeList.length - currentQuestionIndex - 1]}`;
+                highlightPrize();
             } else {
                 endQuiz();
             }
         }
 
-        function selectAnswer(index) {
+        function selectAnswer(selectedIndex) {
             const question = questions[currentQuestionIndex];
-            if (index === question.correct) {
-                score = prizeList[prizeList.length - currentQuestionIndex - 1];
-                document.getElementById('stake-container').innerText = `Stawka: ${score}`;
+            if (selectedIndex === question.correct) {
+                score += parseInt(prizeList[prizeList.length - currentQuestionIndex - 1]);
                 currentQuestionIndex++;
-                highlightPrize();
                 showQuestion();
             } else {
                 endQuiz();
@@ -270,6 +278,7 @@
             document.getElementById('result-container').style.display = 'block';
             document.getElementById('start-button').style.display = 'inline-block'; // Przywróć przycisk startu
             showScoreboard();
+            document.getElementById('background-music').pause(); // Zatrzymaj muzykę
         }
 
         function highlightPrize() {
