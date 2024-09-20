@@ -120,6 +120,13 @@
             padding: 5px;
             font-size: 16px;
         }
+
+        #top-scores {
+            margin-top: 20px;
+            font-size: 20px;
+            text-align: left;
+            color: yellow;
+        }
     </style>
 </head>
 <body>
@@ -138,6 +145,10 @@
             <li>1 000 zł</li>
             <li>500 zł</li>
         </ul>
+        <div id="top-scores" style="display: none;">
+            <h3>Najlepsze wyniki</h3>
+            <ul id="top-scores-list"></ul>
+        </div>
         <div id="question-container" style="display: none;">
             <div class="question"></div>
             <div class="answers"></div>
@@ -211,6 +222,7 @@
             shuffleQuestions();
             highlightPrize();
             showQuestion();
+            updateTopScores();
         }
 
         function shuffleQuestions() {
@@ -232,6 +244,7 @@
                     button.onclick = () => selectAnswer(index);
                     answersContainer.appendChild(button);
                 });
+                document.getElementById('top-scores').style.display = 'block'; // Pokaż najlepsze wyniki
             } else {
                 endQuiz();
             }
@@ -252,11 +265,10 @@
 
         function endQuiz() {
             document.getElementById('question-container').style.display = 'none';
-            document.getElementById('result-container').innerText = `Koniec gry! Twoja wygrana to ${score}`;
-            document.getElementById('result-container').style.display = 'block';
             document.getElementById('quit-button').style.display = 'none';
-            document.getElementById('lifeline-button').style.display = 'none';
-            document.getElementById('start-button').style.display = 'block'; // Przywróć przycisk startu
+            document.getElementById('result-container').innerHTML = `Koniec gry! Twój wynik: ${score} zł`;
+            document.getElementById('result-container').style.display = 'block';
+            document.getElementById('start-button').style.display = 'inline-block'; // Przywróć przycisk startu
             showScoreboard();
         }
 
@@ -311,6 +323,7 @@
                 localStorage.setItem('scoreboard', JSON.stringify(savedScores));
                 updateScoreboard();
                 document.getElementById('name-input').value = '';
+                updateTopScores();
             } else {
                 alert("Proszę wpisać swoje imię.");
             }
@@ -327,6 +340,19 @@
                 nameCell.innerText = entry.name;
                 scoreCell.innerText = entry.score;
             });
+        }
+
+        function updateTopScores() {
+            const savedScores = JSON.parse(localStorage.getItem('scoreboard')) || [];
+            const topScores = savedScores.sort((a, b) => b.score - a.score).slice(0, 5);
+            const topScoresList = document.getElementById('top-scores-list');
+            topScoresList.innerHTML = '';
+            topScores.forEach(entry => {
+                const listItem = document.createElement('li');
+                listItem.innerText = `${entry.name}: ${entry.score} zł`;
+                topScoresList.appendChild(listItem);
+            });
+            document.getElementById('top-scores').style.display = topScores.length > 0 ? 'block' : 'none';
         }
     </script>
 </body>
