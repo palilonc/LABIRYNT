@@ -93,15 +93,21 @@
 
         #prizes-list li {
             margin-bottom: 10px;
+            padding: 5px;
+            border-radius: 5px;
+            display: inline-block;
+            min-width: 150px;
         }
 
         .highlight {
             color: yellow;
+            background-color: rgba(255, 255, 0, 0.2);
         }
 
         .guaranteed {
             color: limegreen;
             font-weight: bold;
+            background-color: rgba(0, 255, 0, 0.2);
         }
 
         #scoreboard-container {
@@ -270,7 +276,7 @@
             document.getElementById('quit-button').style.display = 'none';
             document.getElementById('scoreboard-container').style.display = 'block';
             backgroundMusic.pause();
-            updateScoreboard(); // Zaktualizuj tablicę wyników
+            updateScoreboard();
         }
 
         function highlightPrize() {
@@ -289,7 +295,7 @@
                 scoreboard.push({ name: playerName, score: score });
                 localStorage.setItem('scoreboard', JSON.stringify(scoreboard));
                 updateScoreboard();
-                document.getElementById('name-input').value = ''; // Wyczyść pole
+                document.getElementById('name-input').value = '';
             }
         });
 
@@ -308,7 +314,6 @@
             });
         }
 
-        // Załaduj tablicę wyników przy starcie
         function loadScoreboard() {
             const storedScoreboard = localStorage.getItem('scoreboard');
             if (storedScoreboard) {
@@ -322,7 +327,6 @@
         backgroundMusic.volume = 0.5;
         backgroundMusic.loop = true;
 
-        // Załaduj tablicę wyników na początku
         loadScoreboard();
     </script>
 </body>
