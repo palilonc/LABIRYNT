@@ -3,181 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kasino Wakacyjne</title>
+    <title>Kasyno AI</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
+            background-color: #2e2e2e;
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
             text-align: center;
         }
-        .menu {
+        header {
+            background-color: #1b1b1b;
+            padding: 20px;
+        }
+        header h1 {
+            font-size: 3em;
+        }
+        .game-container {
+            display: flex;
+            justify-content: space-around;
             margin: 20px;
         }
         .game {
-            display: none;
+            background-color: #3e3e3e;
+            border-radius: 10px;
+            padding: 20px;
+            width: 30%;
         }
-        #initial-money {
-            margin: 20px;
+        .game h2 {
+            font-size: 2em;
         }
-        .cards {
-            margin: 20px;
+        .game button {
+            padding: 10px 20px;
+            background-color: #ff5722;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2em;
+        }
+        .game button:hover {
+            background-color: #e64a19;
+        }
+        footer {
+            margin-top: 50px;
+            padding: 20px;
+            background-color: #1b1b1b;
         }
     </style>
 </head>
 <body>
 
-    <h1>Kasino Wakacyjne</h1>
-    <audio controls autoplay loop>
-        <source src="muzyka_wakacyjna.mp3" type="audio/mpeg">
-        Twój przeglądarka nie obsługuje odtwarzania audio.
+    <header>
+        <h1>Kasyno AI</h1>
+        <p>Witamy w kasynie z grami opartymi na AI!</p>
+    </header>
+
+    <!-- Muzyka w tle -->
+    <audio autoplay loop>
+        <source src="mata-jestem-pojebany.mp3" type="audio/mpeg">
+        Twoja przeglądarka nie obsługuje elementu audio.
     </audio>
 
-    <div id="initial-money">
-        <h2>Twoje pieniądze: <span id="money">1000000</span> USD</h2>
-    </div>
+    <section class="game-container">
+        <!-- Gra 1: Ruletka -->
+        <div class="game">
+            <h2>Ruletka</h2>
+            <p>Spróbuj swojego szczęścia w ruletce!</p>
+            <button onclick="playRoulette()">Zagraj</button>
+        </div>
 
-    <div class="menu">
-        <button onclick="showGame('slot')">Jednoręki bandyta</button>
-        <button onclick="showGame('poker')">Poker</button>
-        <button onclick="showGame('oczko')">Oczko</button>
-        <button onclick="showGame('wojna')">Wojna karciana</button>
-        <button onclick="showGame('ruletka')">Ruletka</button>
-    </div>
+        <!-- Gra 2: Blackjack -->
+        <div class="game">
+            <h2>Blackjack</h2>
+            <p>Pokonaj krupiera i wygraj!</p>
+            <button onclick="playBlackjack()">Zagraj</button>
+        </div>
 
-    <div id="slot" class="game">
-        <h2>Jednoręki bandyta</h2>
-        <button onclick="playSlot()">Graj</button>
-    </div>
+        <!-- Gra 3: Jednoręki bandyta -->
+        <div class="game">
+            <h2>Jednoręki bandyta</h2>
+            <p>Zakręć bębnami i zdobądź nagrody!</p>
+            <button onclick="playSlotMachine()">Zagraj</button>
+        </div>
+    </section>
 
-    <div id="poker" class="game">
-        <h2>Poker</h2>
-        <input type="number" id="poker-bet" placeholder="Kwota zakładu">
-        <button onclick="playPoker()">Graj</button>
-    </div>
-
-    <div id="oczko" class="game">
-        <h2>Oczko</h2>
-        <input type="number" id="oczko-bet" placeholder="Kwota zakładu">
-        <button onclick="startOczko()">Graj</button>
-        <div class="cards" id="oczko-cards"></div>
-        <div class="cards" id="dealer-cards"></div>
-    </div>
-
-    <div id="wojna" class="game">
-        <h2>Wojna karciana</h2>
-        <input type="number" id="wojna-bet" placeholder="Kwota zakładu">
-        <button onclick="playWojna()">Graj</button>
-    </div>
-
-    <div id="ruletka" class="game">
-        <h2>Ruletka</h2>
-        <input type="number" id="ruletka-bet" placeholder="Kwota zakładu">
-        <button onclick="playRuletka()">Graj</button>
-    </div>
+    <footer>
+        <p>&copy; 2024 Kasyno AI. Wszelkie prawa zastrzeżone.</p>
+    </footer>
 
     <script>
-        let money = 1000000;
-
-        function showGame(game) {
-            const games = document.querySelectorAll('.game');
-            games.forEach(g => g.style.display = 'none');
-            document.getElementById(game).style.display = 'block';
+        function playRoulette() {
+            alert("Rozpoczynasz grę w ruletkę! Mechanizm AI wkrótce.");
         }
 
-        function updateMoney() {
-            document.getElementById('money').innerText = money;
+        function playBlackjack() {
+            alert("Rozpoczynasz grę w blackjacka! Mechanizm AI wkrótce.");
         }
 
-        function startOczko() {
-            const bet = parseInt(document.getElementById('oczko-bet').value);
-            if (bet > money) {
-                alert("Nie masz wystarczającej kwoty!");
-                return;
-            }
-            money -= bet;
-
-            const playerCards = [drawCard(), drawCard()];
-            const dealerCards = [drawCard(), drawCard()];
-
-            const playerScore = calculateScore(playerCards);
-            const dealerScore = calculateScore(dealerCards);
-
-            displayCards(playerCards, dealerCards);
-
-            let result;
-            if (playerScore > 21) {
-                result = 'Przegrałeś! Suma kart: ' + playerScore;
-            } else if (dealerScore > 21 || playerScore > dealerScore) {
-                result = 'Wygrałeś! Suma kart: ' + playerScore;
-                money += bet * 2;
-            } else {
-                result = 'Przegrałeś! Suma kart: ' + playerScore;
-            }
-
-            alert(result);
-            updateMoney();
-        }
-
-        function drawCard() {
-            return Math.floor(Math.random() * 10) + 1; // Losowa karta od 1 do 10
-        }
-
-        function calculateScore(cards) {
-            return cards.reduce((a, b) => a + b, 0);
-        }
-
-        function displayCards(playerCards, dealerCards) {
-            document.getElementById('oczko-cards').innerText = 'Twoje karty: ' + playerCards.join(', ');
-            document.getElementById('dealer-cards').innerText = 'Karty krupiera: ' + dealerCards.join(', ');
-        }
-
-        function playSlot() {
-            const result = Math.random() < 0.5 ? 1000 : -1000;
-            money += result;
-            alert(`Wynik: ${result > 0 ? 'Wygrałeś' : 'Przegrałeś'} ${Math.abs(result)} USD`);
-            updateMoney();
-        }
-
-        function playPoker() {
-            const bet = parseInt(document.getElementById('poker-bet').value);
-            if (bet > money) {
-                alert("Nie masz wystarczającej kwoty!");
-                return;
-            }
-            money -= bet;
-            const result = Math.random() < 0.5 ? bet * 2 : 0;
-            money += result;
-            alert(`Wynik: ${result > 0 ? 'Wygrałeś' : 'Przegrałeś'} ${Math.abs(result)} USD`);
-            updateMoney();
-        }
-
-        function playWojna() {
-            const bet = parseInt(document.getElementById('wojna-bet').value);
-            if (bet > money) {
-                alert("Nie masz wystarczającej kwoty!");
-                return;
-            }
-            money -= bet;
-            const playerCard = Math.floor(Math.random() * 13) + 1;
-            const aiCard = Math.floor(Math.random() * 13) + 1;
-            const result = playerCard > aiCard ? bet : 0;
-            money += result;
-            alert(`Twoja karta: ${playerCard}, Karta AI: ${aiCard}. Wynik: ${result > 0 ? 'Wygrałeś' : 'Przegrałeś'} ${Math.abs(result)} USD`);
-            updateMoney();
-        }
-
-        function playRuletka() {
-            const bet = parseInt(document.getElementById('ruletka-bet').value);
-            if (bet > money) {
-                alert("Nie masz wystarczającej kwoty!");
-                return;
-            }
-            money -= bet;
-            const win = Math.random() < 0.5;
-            const result = win ? bet * 2 : 0;
-            money += result;
-            alert(`Wynik: ${win ? 'Wygrałeś' : 'Przegrałeś'} ${Math.abs(result)} USD`);
-            updateMoney();
+        function playSlotMachine() {
+            alert("Rozpoczynasz grę na jednorękim bandycie! Mechanizm AI wkrótce.");
         }
     </script>
 
