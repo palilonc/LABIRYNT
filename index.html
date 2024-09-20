@@ -83,11 +83,6 @@
             margin-bottom: 20px;
         }
 
-        #timer {
-            font-size: 20px;
-            margin-top: 10px;
-        }
-
         #prizes-list {
             font-size: 20px;
             list-style: none;
@@ -102,6 +97,35 @@
 
         .highlight {
             color: yellow;
+        }
+
+        #scoreboard-container {
+            margin-top: 20px;
+        }
+
+        #scoreboard {
+            font-size: 18px;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        #scoreboard th, #scoreboard td {
+            border: 1px solid white;
+            padding: 10px;
+        }
+
+        #scoreboard th {
+            background-color: #007bff;
+        }
+
+        #scoreboard td {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        #name-input {
+            margin-top: 10px;
+            padding: 5px;
+            font-size: 16px;
         }
     </style>
 </head>
@@ -126,7 +150,6 @@
             <div class="answers"></div>
         </div>
         <div id="stake-container">Stawka: 0 zł</div>
-        <div id="timer" style="display: none;">Czas: 30</div>
         <button id="quit-button" style="display: none;">Rezygnuję</button>
         <div id="result-container"></div>
     </div>
@@ -134,6 +157,22 @@
     <button id="start-button">Start Gry</button> <!-- Guzik startu gry -->
 
     <audio id="background-music" src="https://github.com/palilonc/milonerzy/raw/refs/heads/main/Theme%20Contestants%20-%20Who%20Wants%20to%20Be%20a%20Millionaire_.mp3" preload="auto"></audio>
+
+    <div id="scoreboard-container" style="display: none;">
+        <h2>Tablica wyników</h2>
+        <table id="scoreboard">
+            <thead>
+                <tr>
+                    <th>Imię</th>
+                    <th>Wynik</th>
+                </tr>
+            </thead>
+            <tbody id="scoreboard-body">
+            </tbody>
+        </table>
+        <input type="text" id="name-input" placeholder="Wpisz swoje imię">
+        <button id="save-score-button">Zapisz wynik</button>
+    </div>
 
     <script>
 	const questions = [
@@ -230,12 +269,9 @@
             "500 zł"
         ];
 
-        const maxTime = 30;
         let currentQuestionIndex = 0;
         let score = 0;
-        let timer;
-        let timeLeft = maxTime;
-        const maxQuestions = 12; // Gra kończy się po 12 pytaniach
+        let scoreboard = [];
         const backgroundMusic = document.getElementById('background-music');
 
         document.getElementById('start-button').addEventListener('click', function() {
@@ -246,19 +282,15 @@
         function startQuiz() {
             currentQuestionIndex = 0;
             score = 0;
-            timeLeft = maxTime;
             document.getElementById('result-container').innerHTML = '';
             document.getElementById('stake-container').innerHTML = 'Stawka: 0 zł';
-            document.getElementById('timer').innerHTML = `Czas: ${timeLeft}`;
             document.getElementById('quit-button').style.display = 'inline-block';
             document.getElementById('question-container').style.display = 'block';
             document.getElementById('result-container').style.display = 'none';
-            document.getElementById('timer').style.display = 'inline'; // Pokaz timer
             document.getElementById('start-button').style.display = 'none'; // Ukryj przycisk startu
             shuffleQuestions(); // Losowanie pytań
             highlightPrize(); // Zaznacz pierwszą nagrodę
             showQuestion();
-            startTimer();
         }
 
         function shuffleQuestions() {
@@ -269,8 +301,7 @@
         }
 
         function showQuestion() {
-            if (currentQuestionIndex < maxQuestions) { // Zakończ grę po 12 pytaniach
-                resetTimer(); // Resetujemy licznik czasu przy nowym pytaniu
+            if (currentQuestionIndex < prizeList.length) { // Gra kończy się po 12 pytaniach
                 const question = questions[currentQuestionIndex];
                 document.querySelector('.question').innerText = question.question;
                 const answersContainer = document.querySelector('.answers');
@@ -289,41 +320,23 @@
         function selectAnswer(index) {
             const question = questions[currentQuestionIndex];
             if (index === question.correct) {
-                score = prizeList[prizeList.length - currentQuestionIndex - 1]; // Przypisz odpowiednią kwotę
-                document.getElementById('stake-container').innerHTML = `Stawka: ${score}`;
+                score = prizeList[prizeList.length - currentQuestionIndex - 1];
+                document.getElementById('stake-container').innerText = `Stawka: ${score}`;
                 currentQuestionIndex++;
-                highlightPrize(); // Podświetl kolejną nagrodę
+                highlightPrize();
                 showQuestion();
             } else {
                 endQuiz();
             }
         }
 
-        function startTimer() {
-            timer = setInterval(() => {
-                timeLeft--;
-                document.getElementById('timer').innerHTML = `Czas: ${timeLeft}`;
-                if (timeLeft <= 0) {
-                    clearInterval(timer);
-                    endQuiz();
-                }
-            }, 1000);
-        }
-
-        function resetTimer() {
-            clearInterval(timer);
-            timeLeft = maxTime;
-            document.getElementById('timer').innerHTML = `Czas: ${timeLeft}`;
-            startTimer();
-        }
-
         function endQuiz() {
             document.getElementById('question-container').style.display = 'none';
             document.getElementById('result-container').innerText = `Koniec gry! Twoja wygrana to ${score}`;
             document.getElementById('result-container').style.display = 'block';
-            document.getElementById('timer').style.display = 'none';
             document.getElementById('quit-button').style.display = 'none';
-            clearInterval(timer);
+            document.getElementById('scoreboard-container').style.display = 'block';
+            backgroundMusic.pause();
         }
 
         function highlightPrize() {
@@ -333,6 +346,30 @@
                 if (index === prizesListItems.length - currentQuestionIndex - 1) {
                     item.classList.add('highlight');
                 }
+            });
+        }
+
+        document.getElementById('save-score-button').addEventListener('click', function() {
+            const playerName = document.getElementById('name-input').value;
+            if (playerName) {
+                scoreboard.push({ name: playerName, score: score });
+                updateScoreboard();
+                document.getElementById('name-input').value = ''; // Wyczyść pole
+            }
+        });
+
+        function updateScoreboard() {
+            const scoreboardBody = document.getElementById('scoreboard-body');
+            scoreboardBody.innerHTML = '';
+            scoreboard.forEach(entry => {
+                const row = document.createElement('tr');
+                const nameCell = document.createElement('td');
+                const scoreCell = document.createElement('td');
+                nameCell.innerText = entry.name;
+                scoreCell.innerText = entry.score;
+                row.appendChild(nameCell);
+                row.appendChild(scoreCell);
+                scoreboardBody.appendChild(row);
             });
         }
 
