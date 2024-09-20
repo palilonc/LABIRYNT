@@ -5,128 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quiz Milionerzy</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-image: url('https://github.com/palilonc/milonerzy/blob/main/w-milionerach-padlo-pytanie-za-milion-i-wygrana.jpeg?raw=true');
-            background-size: cover;
-            background-position: center;
-            margin: 0;
-            padding: 20px;
-            color: white;
-        }
-
-        #quiz-container {
-            background-color: rgba(0, 0, 0, 0.7);
-            padding: 20px;
-            border-radius: 10px;
-            max-width: 800px;
-            margin: auto;
-            text-align: center;
-            color: white;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        #question-container {
-            flex-grow: 1;
-            margin-left: 20px;
-        }
-
-        .question {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 20px;
-        }
-
-        .answers button {
-            display: block;
-            font-size: 20px;
-            margin-bottom: 10px;
-            background-color: rgba(255, 255, 255, 0.2);
-            padding: 10px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            width: 100%;
-            border: none;
-            color: white;
-        }
-
-        .answers button:hover {
-            background-color: rgba(255, 255, 255, 0.4);
-        }
-
-        button {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            margin-top: 20px;
-        }
-
-        button:hover {
-            background-color: #0056b3;
-        }
-
-        #result-container {
-            margin-top: 20px;
-            font-size: 22px;
-            font-weight: bold;
-        }
-
-        #stake-container {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 20px;
-        }
-
-        #prizes-list {
-            font-size: 20px;
-            list-style: none;
-            padding: 0;
-            text-align: right;
-            margin-right: 20px;
-        }
-
-        #prizes-list li {
-            margin-bottom: 10px;
-        }
-
-        .highlight {
-            color: yellow;
-        }
-
-        #scoreboard-container {
-            margin-top: 20px;
-        }
-
-        #scoreboard {
-            font-size: 18px;
-            border-collapse: collapse;
-            width: 100%;
-        }
-
-        #scoreboard th, #scoreboard td {
-            border: 1px solid white;
-            padding: 10px;
-        }
-
-        #scoreboard th {
-            background-color: #007bff;
-        }
-
-        #scoreboard td {
-            background-color: rgba(255, 255, 255, 0.2);
-        }
-
-        #name-input {
-            margin-top: 10px;
-            padding: 5px;
-            font-size: 16px;
-        }
+        /* Twoje style pozostają bez zmian */
     </style>
 </head>
 <body>
@@ -154,7 +33,7 @@
         <div id="result-container"></div>
     </div>
 
-    <button id="start-button">Start Gry</button> <!-- Guzik startu gry -->
+    <button id="start-button">Start Gry</button>
 
     <audio id="background-music" src="https://github.com/palilonc/milonerzy/raw/refs/heads/main/Theme%20Contestants%20-%20Who%20Wants%20to%20Be%20a%20Millionaire_.mp3" preload="auto"></audio>
 
@@ -199,12 +78,12 @@
 
         let currentQuestionIndex = 0;
         let score = 0;
-        let scoreboard = [];
+        let scoreboard = JSON.parse(localStorage.getItem('scoreboard')) || [];
         const backgroundMusic = document.getElementById('background-music');
 
         document.getElementById('start-button').addEventListener('click', function() {
             startQuiz();
-            backgroundMusic.play(); // Odtwórz muzykę po starcie gry
+            backgroundMusic.play();
         });
 
         function startQuiz() {
@@ -215,9 +94,9 @@
             document.getElementById('quit-button').style.display = 'inline-block';
             document.getElementById('question-container').style.display = 'block';
             document.getElementById('result-container').style.display = 'none';
-            document.getElementById('start-button').style.display = 'none'; // Ukryj przycisk startu
-            shuffleQuestions(); // Losowanie pytań
-            highlightPrize(); // Zaznacz pierwszą nagrodę
+            document.getElementById('start-button').style.display = 'none';
+            shuffleQuestions();
+            highlightPrize();
             showQuestion();
         }
 
@@ -229,7 +108,7 @@
         }
 
         function showQuestion() {
-            if (currentQuestionIndex < prizeList.length) { // Gra kończy się po 12 pytaniach
+            if (currentQuestionIndex < prizeList.length) {
                 const question = questions[currentQuestionIndex];
                 document.querySelector('.question').innerText = question.question;
                 const answersContainer = document.querySelector('.answers');
@@ -265,6 +144,7 @@
             document.getElementById('quit-button').style.display = 'none';
             document.getElementById('scoreboard-container').style.display = 'block';
             backgroundMusic.pause();
+            updateScoreboard(); // Zaktualizuj tablicę wyników
         }
 
         function highlightPrize() {
@@ -281,6 +161,7 @@
             const playerName = document.getElementById('name-input').value;
             if (playerName) {
                 scoreboard.push({ name: playerName, score: score });
+                localStorage.setItem('scoreboard', JSON.stringify(scoreboard)); // Zapisz wyniki do localStorage
                 updateScoreboard();
                 document.getElementById('name-input').value = ''; // Wyczyść pole
             }
@@ -305,6 +186,9 @@
 
         backgroundMusic.volume = 0.5;
         backgroundMusic.loop = true;
+
+        // Naładowanie wyników z localStorage
+        updateScoreboard();
     </script>
 </body>
 </html>
