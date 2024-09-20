@@ -23,6 +23,13 @@
             margin: auto;
             text-align: center;
             color: white;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        #question-container {
+            flex-grow: 1;
+            margin-left: 20px;
         }
 
         .question {
@@ -80,20 +87,51 @@
             font-size: 20px;
             margin-top: 10px;
         }
+
+        #prizes-list {
+            font-size: 20px;
+            list-style: none;
+            padding: 0;
+            text-align: right;
+            margin-right: 20px;
+        }
+
+        #prizes-list li {
+            margin-bottom: 10px;
+        }
+
+        .highlight {
+            color: yellow;
+        }
     </style>
 </head>
 <body>
     <div id="quiz-container">
-        <button id="start-button">Start Gry</button> <!-- Dodany guzik startu -->
-        <div id="question-container" style="display: none;"> <!-- Ukryty na początku -->
+        <ul id="prizes-list">
+            <li>1 000 000 zł</li>
+            <li>500 000 zł</li>
+            <li>250 000 zł</li>
+            <li>125 000 zł</li>
+            <li>75 000 zł</li>
+            <li>40 000 zł</li>
+            <li>20 000 zł</li>
+            <li>10 000 zł</li>
+            <li>5 000 zł</li>
+            <li>2 000 zł</li>
+            <li>1 000 zł</li>
+            <li>500 zł</li>
+        </ul>
+        <div id="question-container" style="display: none;">
             <div class="question"></div>
             <div class="answers"></div>
         </div>
         <div id="stake-container">Stawka: 0 zł</div>
         <div id="timer" style="display: none;">Czas: 30</div>
-        <button id="quit-button" style="display: none;">Rezygnuję</button> <!-- Ukryty na początku -->
+        <button id="quit-button" style="display: none;">Rezygnuję</button>
         <div id="result-container"></div>
     </div>
+
+    <button id="start-button">Start Gry</button> <!-- Guzik startu gry -->
 
     <audio id="background-music" src="https://github.com/palilonc/milonerzy/raw/refs/heads/main/Theme%20Contestants%20-%20Who%20Wants%20to%20Be%20a%20Millionaire_.mp3" preload="auto"></audio>
 
@@ -177,12 +215,27 @@
             { question: "Który kraj jest największy pod względem powierzchni?", answers: ["Chiny", "Rosja", "Kanada", "USA"], correct: 1 },
         ];
 
+        const prizeList = [
+            "1 000 000 zł",
+            "500 000 zł",
+            "250 000 zł",
+            "125 000 zł",
+            "75 000 zł",
+            "40 000 zł",
+            "20 000 zł",
+            "10 000 zł",
+            "5 000 zł",
+            "2 000 zł",
+            "1 000 zł",
+            "500 zł"
+        ];
+
         const maxTime = 30;
         let currentQuestionIndex = 0;
         let score = 0;
         let timer;
         let timeLeft = maxTime;
-        const maxQuestions = 2; // Gra kończy się po 2 pytaniach
+        const maxQuestions = 12; // Gra kończy się po 12 pytaniach
         const backgroundMusic = document.getElementById('background-music');
 
         document.getElementById('start-button').addEventListener('click', function() {
@@ -203,6 +256,7 @@
             document.getElementById('timer').style.display = 'inline'; // Pokaz timer
             document.getElementById('start-button').style.display = 'none'; // Ukryj przycisk startu
             shuffleQuestions(); // Losowanie pytań
+            highlightPrize(); // Zaznacz pierwszą nagrodę
             showQuestion();
             startTimer();
         }
@@ -215,7 +269,7 @@
         }
 
         function showQuestion() {
-            if (currentQuestionIndex < maxQuestions) { // Zakończ grę po 2 pytaniach
+            if (currentQuestionIndex < maxQuestions) { // Zakończ grę po 12 pytaniach
                 resetTimer(); // Resetujemy licznik czasu przy nowym pytaniu
                 const question = questions[currentQuestionIndex];
                 document.querySelector('.question').innerText = question.question;
@@ -235,9 +289,10 @@
         function selectAnswer(index) {
             const question = questions[currentQuestionIndex];
             if (index === question.correct) {
-                score += 1000; // Dodaj stawkę
-                document.getElementById('stake-container').innerHTML = `Stawka: ${score} zł`;
+                score = prizeList[prizeList.length - currentQuestionIndex - 1]; // Przypisz odpowiednią kwotę
+                document.getElementById('stake-container').innerHTML = `Stawka: ${score}`;
                 currentQuestionIndex++;
+                highlightPrize(); // Podświetl kolejną nagrodę
                 showQuestion();
             } else {
                 endQuiz();
@@ -264,11 +319,21 @@
 
         function endQuiz() {
             document.getElementById('question-container').style.display = 'none';
-            document.getElementById('result-container').innerText = `Koniec gry! Twój wynik to ${score} zł`;
+            document.getElementById('result-container').innerText = `Koniec gry! Twoja wygrana to ${score}`;
             document.getElementById('result-container').style.display = 'block';
             document.getElementById('timer').style.display = 'none';
             document.getElementById('quit-button').style.display = 'none';
             clearInterval(timer);
+        }
+
+        function highlightPrize() {
+            const prizesListItems = document.querySelectorAll('#prizes-list li');
+            prizesListItems.forEach((item, index) => {
+                item.classList.remove('highlight');
+                if (index === prizesListItems.length - currentQuestionIndex - 1) {
+                    item.classList.add('highlight');
+                }
+            });
         }
 
         document.getElementById('quit-button').addEventListener('click', endQuiz);
