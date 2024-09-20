@@ -22,22 +22,10 @@
             max-width: 800px;
             margin: auto;
             text-align: center;
-            color: white;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        #question-container {
-            flex-grow: 1;
-            margin-left: 20px;
-            border: 2px solid rgba(255, 255, 255, 0.5);
-            padding: 20px;
-            border-radius: 10px;
-            background-color: rgba(0, 0, 0, 0.8);
         }
 
         .question {
-            font-size: 26px;
+            font-size: 24px;
             font-weight: bold;
             margin-bottom: 20px;
         }
@@ -97,26 +85,10 @@
 
         #prizes-list li {
             margin-bottom: 10px;
-            padding: 10px;
-            border-radius: 5px;
-            display: inline-block;
-            min-width: 150px;
-            transition: transform 0.2s;
-        }
-
-        #prizes-list li:hover {
-            transform: scale(1.05);
         }
 
         .highlight {
             color: yellow;
-            background-color: rgba(255, 255, 0, 0.2);
-        }
-
-        .guaranteed {
-            color: limegreen;
-            font-weight: bold;
-            background-color: rgba(0, 255, 0, 0.2);
         }
 
         #scoreboard-container {
@@ -152,22 +124,23 @@
 <body>
     <div id="quiz-container">
         <ul id="prizes-list">
-            <li class="guaranteed">1 000 000 zł</li>
+            <li>1 000 000 zł</li>
             <li>500 000 zł</li>
             <li>250 000 zł</li>
-            <li class="guaranteed">125 000 zł</li>
+            <li>125 000 zł</li>
             <li>75 000 zł</li>
-            <li class="guaranteed">40 000 zł</li>
+            <li>40 000 zł</li>
             <li>20 000 zł</li>
             <li>10 000 zł</li>
             <li>5 000 zł</li>
             <li>2 000 zł</li>
-            <li class="guaranteed">1 000 zł</li>
+            <li>1 000 zł</li>
             <li>500 zł</li>
         </ul>
         <div id="question-container" style="display: none;">
             <div class="question"></div>
             <div class="answers"></div>
+            <button id="lifeline-button" style="display: none;">Pół na pół</button>
         </div>
         <div id="stake-container">Stawka: 0 zł</div>
         <button id="quit-button" style="display: none;">Rezygnuję</button>
@@ -175,8 +148,7 @@
     </div>
 
     <button id="start-button">Start Gry</button>
-
-    <audio id="background-music" src="https://github.com/palilonc/milonerzy/raw/refs/heads/main/Theme%20Contestants%20-%20Who%20Wants%20to%20Be%20a%20Millionaire_.mp3" preload="auto"></audio>
+    <audio id="background-music" src="https://example.com/music.mp3" preload="auto"></audio>
 
     <div id="scoreboard-container" style="display: none;">
         <h2>Tablica wyników</h2>
@@ -219,12 +191,11 @@
 
         let currentQuestionIndex = 0;
         let score = 0;
-        let scoreboard = [];
-        const backgroundMusic = document.getElementById('background-music');
+        let lifelineUsed = false;
 
         document.getElementById('start-button').addEventListener('click', function() {
             startQuiz();
-            backgroundMusic.play();
+            document.getElementById('background-music').play();
         });
 
         function startQuiz() {
@@ -236,6 +207,7 @@
             document.getElementById('question-container').style.display = 'block';
             document.getElementById('result-container').style.display = 'none';
             document.getElementById('start-button').style.display = 'none';
+            document.getElementById('lifeline-button').style.display = 'inline-block';
             shuffleQuestions();
             highlightPrize();
             showQuestion();
@@ -283,9 +255,9 @@
             document.getElementById('result-container').innerText = `Koniec gry! Twoja wygrana to ${score}`;
             document.getElementById('result-container').style.display = 'block';
             document.getElementById('quit-button').style.display = 'none';
-            document.getElementById('scoreboard-container').style.display = 'block';
-            backgroundMusic.pause();
-            updateScoreboard();
+            document.getElementById('lifeline-button').style.display = 'none';
+            document.getElementById('background-music').pause();
+            showScoreboard();
         }
 
         function highlightPrize() {
@@ -298,45 +270,43 @@
             });
         }
 
-        document.getElementById('save-score-button').addEventListener('click', function() {
-            const playerName = document.getElementById('name-input').value;
-            if (playerName) {
-                scoreboard.push({ name: playerName, score: score });
-                localStorage.setItem('scoreboard', JSON.stringify(scoreboard));
-                updateScoreboard();
-                document.getElementById('name-input').value = '';
+        document.getElementById('lifeline-button').addEventListener('click', function() {
+            if (!lifelineUsed) {
+                lifelineUsed = true;
+                const question = questions[currentQuestionIndex];
+                const correctIndex = question.correct;
+                const wrongIndices = [0, 1, 2, 3].filter(i => i !== correctIndex);
+                const indicesToRemove = wrongIndices.sort(() => 0.5 - Math.random()).slice(0, 2);
+                const answersContainer = document.querySelector('.answers');
+                indicesToRemove.forEach(index => {
+                    answersContainer.children[index].style.display = 'none';
+                });
+                this.style.display = 'none';
+            } else {
+                alert("Już użyłeś koła ratunkowego!");
             }
         });
 
-        function updateScoreboard() {
-            const scoreboardBody = document.getElementById('scoreboard-body');
-            scoreboardBody.innerHTML = '';
-            scoreboard.forEach(entry => {
-                const row = document.createElement('tr');
-                const nameCell = document.createElement('td');
-                const scoreCell = document.createElement('td');
-                nameCell.innerText = entry.name;
-                scoreCell.innerText = entry.score;
-                row.appendChild(nameCell);
-                row.appendChild(scoreCell);
-                scoreboardBody.appendChild(row);
-            });
-        }
-
-        function loadScoreboard() {
-            const storedScoreboard = localStorage.getItem('scoreboard');
-            if (storedScoreboard) {
-                scoreboard = JSON.parse(storedScoreboard);
-                updateScoreboard();
-            }
-        }
-
         document.getElementById('quit-button').addEventListener('click', endQuiz);
 
-        backgroundMusic.volume = 0.5;
-        backgroundMusic.loop = true;
+        function showScoreboard() {
+            document.getElementById('scoreboard-container').style.display = 'block';
+        }
 
-        loadScoreboard();
+        document.getElementById('save-score-button').addEventListener('click', function() {
+            const name = document.getElementById('name-input').value;
+            if (name) {
+                const scoreboardBody = document.getElementById('scoreboard-body');
+                const newRow = scoreboardBody.insertRow();
+                const nameCell = newRow.insertCell(0);
+                const scoreCell = newRow.insertCell(1);
+                nameCell.innerText = name;
+                scoreCell.innerText = score;
+                document.getElementById('name-input').value = '';
+            } else {
+                alert("Proszę wpisać swoje imię.");
+            }
+        });
     </script>
 </body>
 </html>
