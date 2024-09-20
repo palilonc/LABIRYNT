@@ -3,108 +3,210 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kasyno AI</title>
+    <title>Quiz Milionerzy</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #2e2e2e;
-            color: #ffffff;
+            background-image: url('https://github.com/palilonc/milonerzy/blob/main/w-milionerach-padlo-pytanie-za-milion-i-wygrana.jpeg?raw=true');
+            background-size: cover;
+            background-position: center;
             margin: 0;
-            padding: 0;
-            text-align: center;
-        }
-        header {
-            background-color: #1b1b1b;
             padding: 20px;
+            color: white;
         }
-        header h1 {
-            font-size: 3em;
-        }
-        .game-container {
-            display: flex;
-            justify-content: space-around;
-            margin: 20px;
-        }
-        .game {
-            background-color: #3e3e3e;
+
+        #quiz-container {
+            background-color: rgba(0, 0, 0, 0.7); /* Półprzezroczyste tło */
+            padding: 20px;
             border-radius: 10px;
-            padding: 20px;
-            width: 30%;
+            max-width: 800px;
+            margin: auto;
+            text-align: center;
+            color: white;
         }
-        .game h2 {
-            font-size: 2em;
+
+        .question {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
         }
-        .game button {
-            padding: 10px 20px;
-            background-color: #ff5722;
-            color: #fff;
-            border: none;
+
+        .answers button {
+            display: block;
+            font-size: 20px;
+            margin-bottom: 10px;
+            background-color: rgba(255, 255, 255, 0.2); /* Półprzezroczyste tło odpowiedzi */
+            padding: 10px;
+            border-radius: 5px;
             cursor: pointer;
-            font-size: 1.2em;
+            transition: background-color 0.3s ease;
+            width: 100%;
+            border: none;
+            color: white;
         }
-        .game button:hover {
-            background-color: #e64a19;
+
+        .answers button:hover {
+            background-color: rgba(255, 255, 255, 0.4); /* Efekt najechania myszką */
         }
-        footer {
-            margin-top: 50px;
-            padding: 20px;
-            background-color: #1b1b1b;
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #result-container {
+            margin-top: 20px;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        #stake-container {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        #timer {
+            font-size: 20px;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
-
-    <header>
-        <h1>Kasyno AI</h1>
-        <p>Witamy w kasynie z grami opartymi na AI!</p>
-    </header>
-
-    <!-- Muzyka w tle -->
-    <audio autoplay loop>
-        <source src="mata-jestem-pojebany.mp3" type="audio/mpeg">
-        Twoja przeglądarka nie obsługuje elementu audio.
-    </audio>
-
-    <section class="game-container">
-        <!-- Gra 1: Ruletka -->
-        <div class="game">
-            <h2>Ruletka</h2>
-            <p>Spróbuj swojego szczęścia w ruletce!</p>
-            <button onclick="playRoulette()">Zagraj</button>
+    <div id="quiz-container">
+        <div id="question-container">
+            <div class="question"></div>
+            <div class="answers"></div>
         </div>
+        <div id="stake-container">Stawka: 0 zł</div>
+        <div id="timer">Czas: 30</div>
+        <button id="quit-button">Rezygnuję</button>
+        <div id="result-container"></div>
+    </div>
 
-        <!-- Gra 2: Blackjack -->
-        <div class="game">
-            <h2>Blackjack</h2>
-            <p>Pokonaj krupiera i wygraj!</p>
-            <button onclick="playBlackjack()">Zagraj</button>
-        </div>
-
-        <!-- Gra 3: Jednoręki bandyta -->
-        <div class="game">
-            <h2>Jednoręki bandyta</h2>
-            <p>Zakręć bębnami i zdobądź nagrody!</p>
-            <button onclick="playSlotMachine()">Zagraj</button>
-        </div>
-    </section>
-
-    <footer>
-        <p>&copy; 2024 Kasyno AI. Wszelkie prawa zastrzeżone.</p>
-    </footer>
+    <audio id="background-music" src="https://github.com/palilonc/milonerzy/raw/refs/heads/main/Theme%20Contestants%20-%20Who%20Wants%20to%20Be%20a%20Millionaire_.mp3" preload="auto"></audio>
+    
+    <button id="play-music">Odtwórz muzykę</button>
 
     <script>
-        function playRoulette() {
-            alert("Rozpoczynasz grę w ruletkę! Mechanizm AI wkrótce.");
+        document.getElementById('play-music').addEventListener('click', function() {
+            const music = document.getElementById('background-music');
+            music.play().catch(function(error) {
+                console.log("Błąd odtwarzania:", error);
+            });
+        });
+        
+        const questions = [
+            { question: "W którym roku wybuchło powstanie warszawskie?", answers: ["1939", "1943", "1944", "1945"], correct: 2 },
+            { question: "Kto był pierwszym królem Polski?", answers: ["Mieszko I", "Bolesław Chrobry", "Kazimierz Wielki", "Władysław Jagiełło"], correct: 1 },
+            // więcej pytań tutaj...
+        ];
+
+        const maxTime = 30;
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let timer;
+        let timeLeft = maxTime;
+
+        function startQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            timeLeft = maxTime;
+            document.getElementById('result-container').innerHTML = '';
+            document.getElementById('stake-container').innerHTML = 'Stawka: 0 zł';
+            document.getElementById('timer').innerHTML = `Czas: ${timeLeft}`;
+            document.getElementById('quit-button').style.display = 'inline-block';
+            document.getElementById('question-container').style.display = 'block';
+            document.getElementById('result-container').style.display = 'none';
+            document.getElementById('timer').style.display = 'inline';
+            shuffleQuestions(); // Losowanie pytań
+            showQuestion();
+            startTimer();
         }
 
-        function playBlackjack() {
-            alert("Rozpoczynasz grę w blackjacka! Mechanizm AI wkrótce.");
+        function shuffleQuestions() {
+            for (let i = questions.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [questions[i], questions[j]] = [questions[j], questions[i]];
+            }
         }
 
-        function playSlotMachine() {
-            alert("Rozpoczynasz grę na jednorękim bandycie! Mechanizm AI wkrótce.");
+        function showQuestion() {
+            if (currentQuestionIndex < questions.length) {
+                resetTimer(); // Resetujemy licznik czasu przy nowym pytaniu
+                const question = questions[currentQuestionIndex];
+                document.querySelector('.question').innerText = question.question;
+                const answersContainer = document.querySelector('.answers');
+                answersContainer.innerHTML = '';
+                question.answers.forEach((answer, index) => {
+                    const button = document.createElement('button');
+                    button.innerText = answer;
+                    button.onclick = () => selectAnswer(index);
+                    answersContainer.appendChild(button);
+                });
+            } else {
+                endQuiz();
+            }
         }
+
+        function selectAnswer(index) {
+            const question = questions[currentQuestionIndex];
+            if (index === question.correct) {
+                score += 1000; // Dodaj stawkę
+                document.getElementById('stake-container').innerHTML = `Stawka: ${score} zł`;
+                currentQuestionIndex++;
+                showQuestion();
+            } else {
+                endQuiz();
+            }
+        }
+
+        function startTimer() {
+            timer = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timer').innerHTML = `Czas: ${timeLeft}`;
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    endQuiz();
+                }
+            }, 1000);
+        }
+
+        function resetTimer() {
+            clearInterval(timer);
+            timeLeft = maxTime;
+            document.getElementById('timer').innerHTML = `Czas: ${timeLeft}`;
+            startTimer();
+        }
+
+        function endQuiz() {
+            document.getElementById('question-container').style.display = 'none';
+            document.getElementById('result-container').innerText = `Koniec gry! Twój wynik to ${score} zł`;
+            document.getElementById('result-container').style.display = 'block';
+            document.getElementById('timer').style.display = 'none';
+            document.getElementById('quit-button').style.display = 'none';
+            clearInterval(timer);
+        }
+
+        document.getElementById('quit-button').addEventListener('click', endQuiz);
+
+        // Start quiz on page load
+        window.onload = startQuiz;
+
+        const backgroundMusic = document.getElementById('background-music');
+        backgroundMusic.volume = 0.5;
+        backgroundMusic.loop = true;
+        backgroundMusic.play();
     </script>
-
 </body>
 </html>
