@@ -174,10 +174,11 @@
         let currentQuestionIndex = 0;
         let score = 0;
 
-        document.getElementById('start-button').addEventListener('click', function() {
-            startQuiz();
-            document.getElementById('background-music').play();
-        });
+document.getElementById('start-button').addEventListener('click', function() {
+    console.log("Przycisk 'Start Gry' został kliknięty."); // Log
+    startQuiz();
+    document.getElementById('background-music').play();
+});
 
         function startQuiz() {
             currentQuestionIndex = 0;
