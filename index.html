@@ -174,7 +174,8 @@
         <button id="save-score-button">Zapisz wynik</button>
     </div>
 
-    <script>
+<script>
+    window.onload = function() {
 	const questions = [
             // Historia
             { question: "W którym roku wybuchło powstanie warszawskie?", answers: ["1939", "1943", "1944", "1945"], correct: 2 },
@@ -286,8 +287,8 @@
 
         let currentQuestionIndex = 0;
         let score = 0;
-        const backgroundMusic = document.getElementById('background-music');
-
+             const backgroundMusic = document.getElementById('background-music');
+        
         document.getElementById('start-button').addEventListener('click', function() {
             startQuiz();
             backgroundMusic.play();
