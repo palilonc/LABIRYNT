@@ -93,6 +93,7 @@
 
         #scoreboard-container {
             margin-top: 20px;
+            display: none;
         }
 
         #scoreboard {
@@ -148,9 +149,8 @@
     </div>
 
     <button id="start-button">Start Gry</button>
-    <audio id="background-music" src="https://example.com/music.mp3" preload="auto"></audio>
 
-    <div id="scoreboard-container" style="display: none;">
+    <div id="scoreboard-container">
         <h2>Tablica wyników</h2>
         <table id="scoreboard">
             <thead>
@@ -195,12 +195,12 @@
 
         document.getElementById('start-button').addEventListener('click', function() {
             startQuiz();
-            document.getElementById('background-music').play();
         });
 
         function startQuiz() {
             currentQuestionIndex = 0;
             score = 0;
+            lifelineUsed = false;
             document.getElementById('result-container').innerHTML = '';
             document.getElementById('stake-container').innerHTML = 'Stawka: 0 zł';
             document.getElementById('quit-button').style.display = 'inline-block';
@@ -256,7 +256,7 @@
             document.getElementById('result-container').style.display = 'block';
             document.getElementById('quit-button').style.display = 'none';
             document.getElementById('lifeline-button').style.display = 'none';
-            document.getElementById('background-music').pause();
+            document.getElementById('start-button').style.display = 'inline-block'; // Przywraca przycisk startu
             showScoreboard();
         }
 
