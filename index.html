@@ -79,8 +79,10 @@
             font-size: 30px; /* Większe kwoty */
             list-style: none;
             padding: 0;
-            text-align: right;
-            margin-right: 20px;
+            text-align: center;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* Dwie kolumny */
+            gap: 10px; /* Odstęp między kwotami */
         }
 
         #prizes-list li {
