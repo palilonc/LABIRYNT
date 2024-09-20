@@ -22,14 +22,6 @@
             max-width: 800px;
             margin: auto;
             text-align: center;
-            color: white;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        #question-container {
-            flex-grow: 1;
-            margin-left: 20px;
         }
 
         .question {
@@ -46,14 +38,9 @@
             padding: 10px;
             border-radius: 5px;
             cursor: pointer;
-            transition: background-color 0.3s ease;
             width: 100%;
             border: none;
             color: white;
-        }
-
-        .answers button:hover {
-            background-color: rgba(255, 255, 255, 0.4);
         }
 
         button {
@@ -67,114 +54,28 @@
             margin-top: 20px;
         }
 
-        button:hover {
-            background-color: #0056b3;
-        }
-
-        #result-container {
+        #result-container, #leaderboard {
             margin-top: 20px;
             font-size: 22px;
             font-weight: bold;
-        }
-
-        #stake-container {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 20px;
-        }
-
-        #prizes-list {
-            font-size: 20px;
-            list-style: none;
-            padding: 0;
-            text-align: right;
-            margin-right: 20px;
-        }
-
-        #prizes-list li {
-            margin-bottom: 10px;
-        }
-
-        .highlight {
-            color: yellow;
-        }
-
-        #scoreboard-container {
-            margin-top: 20px;
-        }
-
-        #scoreboard {
-            font-size: 18px;
-            border-collapse: collapse;
-            width: 100%;
-        }
-
-        #scoreboard th, #scoreboard td {
-            border: 1px solid white;
-            padding: 10px;
-        }
-
-        #scoreboard th {
-            background-color: #007bff;
-        }
-
-        #scoreboard td {
-            background-color: rgba(255, 255, 255, 0.2);
-        }
-
-        #name-input {
-            margin-top: 10px;
-            padding: 5px;
-            font-size: 16px;
         }
     </style>
 </head>
 <body>
     <div id="quiz-container">
-        <ul id="prizes-list">
-            <li>1 000 000 zł</li>
-            <li>500 000 zł</li>
-            <li>250 000 zł</li>
-            <li>125 000 zł</li>
-            <li>75 000 zł</li>
-            <li>40 000 zł</li>
-            <li>20 000 zł</li>
-            <li>10 000 zł</li>
-            <li>5 000 zł</li>
-            <li>2 000 zł</li>
-            <li>1 000 zł</li>
-            <li>500 zł</li>
-        </ul>
-        <div id="question-container" style="display: none;">
+        <div id="question-container" style="display:none;">
             <div class="question"></div>
             <div class="answers"></div>
         </div>
-        <div id="stake-container">Stawka: 0 zł</div>
-        <button id="quit-button" style="display: none;">Rezygnuję</button>
+        <button id="start-button">Start Gry</button>
+        <button id="quit-button" style="display:none;">Rezygnuję</button>
         <div id="result-container"></div>
+        <div id="leaderboard" style="display:none;"></div>
     </div>
-
-    <button id="start-button">Start Gry</button>
 
     <audio id="background-music" src="https://github.com/palilonc/milonerzy/raw/refs/heads/main/Theme%20Contestants%20-%20Who%20Wants%20to%20Be%20a%20Millionaire_.mp3" preload="auto"></audio>
 
-    <div id="scoreboard-container" style="display: none;">
-        <h2>Tablica wyników</h2>
-        <table id="scoreboard">
-            <thead>
-                <tr>
-                    <th>Imię</th>
-                    <th>Wynik</th>
-                </tr>
-            </thead>
-            <tbody id="scoreboard-body">
-            </tbody>
-        </table>
-        <input type="text" id="name-input" placeholder="Wpisz swoje imię">
-        <button id="save-score-button">Zapisz wynik</button>
-    </div>
-
-<script>
+    <script>
     window.onload = function() {
 	const questions = [
             // Historia
@@ -270,76 +171,47 @@
             "500 zł"
         ];
 
-        const prizeList = [
-            "1 000 000 zł",
-            "500 000 zł",
-            "250 000 zł",
-            "125 000 zł",
-            "75 000 zł",
-            "40 000 zł",
-            "20 000 zł",
-            "10 000 zł",
-            "5 000 zł",
-            "2 000 zł",
-            "1 000 zł",
-            "500 zł"
-        ];
-
         let currentQuestionIndex = 0;
         let score = 0;
-             const backgroundMusic = document.getElementById('background-music');
-        
+
         document.getElementById('start-button').addEventListener('click', function() {
             startQuiz();
-            backgroundMusic.play();
+            document.getElementById('background-music').play();
         });
 
         function startQuiz() {
             currentQuestionIndex = 0;
             score = 0;
-            document.getElementById('result-container').innerHTML = '';
-            document.getElementById('stake-container').innerHTML = 'Stawka: 0 zł';
-            document.getElementById('quit-button').style.display = 'inline-block';
+            document.getElementById('result-container').innerText = '';
             document.getElementById('question-container').style.display = 'block';
-            document.getElementById('result-container').style.display = 'none';
-            document.getElementById('start-button').style.display = 'none';
-            shuffleQuestions();
-            highlightPrize();
+            document.getElementById('quit-button').style.display = 'inline-block';
+            document.getElementById('leaderboard').style.display = 'none';
             showQuestion();
         }
 
-        function shuffleQuestions() {
-            for (let i = questions.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [questions[i], questions[j]] = [questions[j], questions[i]];
-            }
-        }
-
         function showQuestion() {
-            if (currentQuestionIndex < prizeList.length) {
-                const question = questions[currentQuestionIndex];
-                document.querySelector('.question').innerText = question.question;
-                const answersContainer = document.querySelector('.answers');
-                answersContainer.innerHTML = '';
-                question.answers.forEach((answer, index) => {
-                    const button = document.createElement('button');
-                    button.innerText = answer;
-                    button.onclick = () => selectAnswer(index);
-                    answersContainer.appendChild(button);
-                });
-            } else {
-                endQuiz();
-            }
+            const question = questions[currentQuestionIndex];
+            document.querySelector('.question').innerText = question.question;
+            const answersContainer = document.querySelector('.answers');
+            answersContainer.innerHTML = '';
+            question.answers.forEach((answer, index) => {
+                const button = document.createElement('button');
+                button.innerText = answer;
+                button.onclick = () => selectAnswer(index);
+                answersContainer.appendChild(button);
+            });
         }
 
         function selectAnswer(index) {
             const question = questions[currentQuestionIndex];
             if (index === question.correct) {
-                score = prizeList[prizeList.length - currentQuestionIndex - 1];
-                document.getElementById('stake-container').innerText = `Stawka: ${score}`;
+                score += 1000; // Dodaj stawkę
                 currentQuestionIndex++;
-                highlightPrize();
-                showQuestion();
+                if (currentQuestionIndex < questions.length) {
+                    showQuestion();
+                } else {
+                    endQuiz();
+                }
             } else {
                 endQuiz();
             }
@@ -347,59 +219,35 @@
 
         function endQuiz() {
             document.getElementById('question-container').style.display = 'none';
-            document.getElementById('result-container').innerText = `Koniec gry! Twoja wygrana to ${score}`;
-            document.getElementById('result-container').style.display = 'block';
             document.getElementById('quit-button').style.display = 'none';
-            document.getElementById('scoreboard-container').style.display = 'block';
-            backgroundMusic.pause();
-            saveScore();
-            displayScoreboard();
+            document.getElementById('result-container').innerText = `Koniec gry! Twój wynik to ${score} zł`;
+            document.getElementById('leaderboard').style.display = 'block';
+            updateLeaderboard(score);
         }
 
-        function highlightPrize() {
-            const prizesListItems = document.querySelectorAll('#prizes-list li');
-            prizesListItems.forEach((item, index) => {
-                item.classList.remove('highlight');
-                if (index === prizesListItems.length - currentQuestionIndex - 1) {
-                    item.classList.add('highlight');
-                }
-            });
-        }
-
-        function saveScore() {
-            const playerName = document.getElementById('name-input').value;
-            if (playerName) {
-                const scoreboard = JSON.parse(localStorage.getItem('scoreboard')) || [];
-                scoreboard.push({ name: playerName, score: score });
-                localStorage.setItem('scoreboard', JSON.stringify(scoreboard));
-                document.getElementById('name-input').value = ''; // Wyczyść pole
+        function updateLeaderboard(newScore) {
+            const leaderboard = JSON.parse(localStorage.getItem('leaderboard')) || [];
+            const name = prompt("Wpisz swoje imię:");
+            if (name) {
+                leaderboard.push({ name, score: newScore });
+                localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
+                displayLeaderboard(leaderboard);
             }
         }
 
-        function displayScoreboard() {
-            const scoreboardBody = document.getElementById('scoreboard-body');
-            scoreboardBody.innerHTML = '';
-            const scoreboard = JSON.parse(localStorage.getItem('scoreboard')) || [];
-            scoreboard.forEach(entry => {
-                const row = document.createElement('tr');
-                const nameCell = document.createElement('td');
-                const scoreCell = document.createElement('td');
-                nameCell.innerText = entry.name;
-                scoreCell.innerText = entry.score;
-                row.appendChild(nameCell);
-                row.appendChild(scoreCell);
-                scoreboardBody.appendChild(row);
+        function displayLeaderboard(leaderboard) {
+            const leaderboardContainer = document.getElementById('leaderboard');
+            leaderboardContainer.innerHTML = '<h3>Tabela wyników:</h3>';
+            leaderboard.forEach(entry => {
+                leaderboardContainer.innerHTML += `${entry.name}: ${entry.score} zł<br>`;
             });
         }
 
-        document.getElementById('save-score-button').addEventListener('click', saveScore);
-        document.getElementById('quit-button').addEventListener('click', endQuiz);
-
-        backgroundMusic.volume = 0.5;
-        backgroundMusic.loop = true;
-
-        // Wyświetl tabelę wyników przy załadowaniu strony
-        displayScoreboard();
+        // Load leaderboard on page load
+        window.onload = function() {
+            const leaderboard = JSON.parse(localStorage.getItem('leaderboard')) || [];
+            displayLeaderboard(leaderboard);
+        };
     </script>
 </body>
 </html>
