@@ -5,7 +5,127 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quiz Milionerzy</title>
     <style>
-        /* Twoje style pozostają bez zmian */
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('https://github.com/palilonc/milonerzy/blob/main/w-milionerach-padlo-pytanie-za-milion-i-wygrana.jpeg?raw=true');
+            background-size: cover;
+            background-position: center;
+            margin: 0;
+            padding: 20px;
+            color: white;
+        }
+
+        #quiz-container {
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 800px;
+            margin: auto;
+            text-align: center;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        #question-container {
+            flex-grow: 1;
+            margin-left: 20px;
+        }
+
+        .question {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .answers button {
+            display: block;
+            font-size: 20px;
+            margin-bottom: 10px;
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 100%;
+            border: none;
+            color: white;
+        }
+
+        .answers button:hover {
+            background-color: rgba(255, 255, 255, 0.4);
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #result-container {
+            margin-top: 20px;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        #stake-container {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        #prizes-list {
+            font-size: 20px;
+            list-style: none;
+            padding: 0;
+            text-align: right;
+            margin-right: 20px;
+        }
+
+        #prizes-list li {
+            margin-bottom: 10px;
+        }
+
+        .highlight {
+            color: yellow;
+        }
+
+        #scoreboard-container {
+            margin-top: 20px;
+        }
+
+        #scoreboard {
+            font-size: 18px;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        #scoreboard th, #scoreboard td {
+            border: 1px solid white;
+            padding: 10px;
+        }
+
+        #scoreboard th {
+            background-color: #007bff;
+        }
+
+        #scoreboard td {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        #name-input {
+            margin-top: 10px;
+            padding: 5px;
+            font-size: 16px;
+        }
     </style>
 </head>
 <body>
@@ -161,7 +281,7 @@
             const playerName = document.getElementById('name-input').value;
             if (playerName) {
                 scoreboard.push({ name: playerName, score: score });
-                localStorage.setItem('scoreboard', JSON.stringify(scoreboard)); // Zapisz wyniki do localStorage
+                localStorage.setItem('scoreboard', JSON.stringify(scoreboard)); // Zapisz wyniki w localStorage
                 updateScoreboard();
                 document.getElementById('name-input').value = ''; // Wyczyść pole
             }
@@ -182,13 +302,27 @@
             });
         }
 
+        // Załaduj tablicę wyników przy starcie
+        function loadScoreboard() {
+            scoreboard.forEach(entry => {
+                const row = document.createElement('tr');
+                const nameCell = document.createElement('td');
+                const scoreCell = document.createElement('td');
+                nameCell.innerText = entry.name;
+                scoreCell.innerText = entry.score;
+                row.appendChild(nameCell);
+                row.appendChild(scoreCell);
+                document.getElementById('scoreboard-body').appendChild(row);
+            });
+        }
+
         document.getElementById('quit-button').addEventListener('click', endQuiz);
 
         backgroundMusic.volume = 0.5;
         backgroundMusic.loop = true;
 
-        // Naładowanie wyników z localStorage
-        updateScoreboard();
+        // Załaduj tablicę wyników na początku
+        loadScoreboard();
     </script>
 </body>
 </html>
