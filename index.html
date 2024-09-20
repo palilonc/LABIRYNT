@@ -16,7 +16,7 @@
         }
 
         #quiz-container {
-            background-color: rgba(0, 0, 0, 0.7); /* Półprzezroczyste tło */
+            background-color: rgba(0, 0, 0, 0.7);
             padding: 20px;
             border-radius: 10px;
             max-width: 800px;
@@ -35,7 +35,7 @@
             display: block;
             font-size: 20px;
             margin-bottom: 10px;
-            background-color: rgba(255, 255, 255, 0.2); /* Półprzezroczyste tło odpowiedzi */
+            background-color: rgba(255, 255, 255, 0.2);
             padding: 10px;
             border-radius: 5px;
             cursor: pointer;
@@ -46,7 +46,7 @@
         }
 
         .answers button:hover {
-            background-color: rgba(255, 255, 255, 0.4); /* Efekt najechania myszką */
+            background-color: rgba(255, 255, 255, 0.4);
         }
 
         button {
@@ -90,7 +90,7 @@
             <div class="answers"></div>
         </div>
         <div id="stake-container">Stawka: 0 zł</div>
-        <div id="timer">Czas: 30</div>
+        <div id="timer" style="display: none;">Czas: 30</div>
         <button id="quit-button" style="display: none;">Rezygnuję</button> <!-- Ukryty na początku -->
         <div id="result-container"></div>
     </div>
@@ -98,13 +98,6 @@
     <audio id="background-music" src="https://github.com/palilonc/milonerzy/raw/refs/heads/main/Theme%20Contestants%20-%20Who%20Wants%20to%20Be%20a%20Millionaire_.mp3" preload="auto"></audio>
 
     <script>
-        document.getElementById('play-music').addEventListener('click', function() {
-            const music = document.getElementById('background-music');
-            music.play().catch(function(error) {
-                console.log("Błąd odtwarzania:", error);
-            });
-        });
-        
 	const questions = [
             // Historia
             { question: "W którym roku wybuchło powstanie warszawskie?", answers: ["1939", "1943", "1944", "1945"], correct: 2 },
@@ -207,7 +200,7 @@
             document.getElementById('quit-button').style.display = 'inline-block';
             document.getElementById('question-container').style.display = 'block';
             document.getElementById('result-container').style.display = 'none';
-            document.getElementById('timer').style.display = 'inline';
+            document.getElementById('timer').style.display = 'inline'; // Pokaz timer
             document.getElementById('start-button').style.display = 'none'; // Ukryj przycisk startu
             shuffleQuestions(); // Losowanie pytań
             showQuestion();
