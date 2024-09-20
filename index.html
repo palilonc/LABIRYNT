@@ -76,7 +76,7 @@
         }
 
         #prizes-list {
-            font-size: 30px; /* Większe kwoty */
+            font-size: 24px; /* Mniejsze kwoty */
             list-style: none;
             padding: 0;
             text-align: center;
@@ -89,11 +89,20 @@
             margin-bottom: 10px;
             color: gold; /* Kolor kwot */
             text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+            border: 2px solid gold; /* Ramka ozdobna */
+            border-radius: 10px; /* Zaokrąglenie rogów */
+            padding: 10px; /* Wewnętrzny odstęp */
+            background-color: rgba(255, 255, 255, 0.1); /* Tło dla kwot */
+            transition: transform 0.3s; /* Efekt powiększenia */
+        }
+
+        #prizes-list li:hover {
+            transform: scale(1.05); /* Powiększenie przy najechaniu */
         }
 
         .highlight {
             color: yellow;
-            font-size: 35px; /* Powiększenie podświetlonej kwoty */
+            font-size: 30px; /* Powiększenie podświetlonej kwoty */
         }
 
         #scoreboard-container {
@@ -244,7 +253,7 @@
         }
 
         function showQuestion() {
-            if (currentQuestionIndex < prizeList.length) {
+            if (currentQuestionIndex < questions.length) {
                 const question = questions[currentQuestionIndex];
                 document.querySelector('.question').innerText = question.question;
                 const answersContainer = document.querySelector('.answers');
