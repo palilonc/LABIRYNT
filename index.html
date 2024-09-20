@@ -84,19 +84,18 @@
 </head>
 <body>
     <div id="quiz-container">
-        <div id="question-container">
+        <button id="start-button">Start Gry</button> <!-- Dodany guzik startu -->
+        <div id="question-container" style="display: none;"> <!-- Ukryty na początku -->
             <div class="question"></div>
             <div class="answers"></div>
         </div>
         <div id="stake-container">Stawka: 0 zł</div>
         <div id="timer">Czas: 30</div>
-        <button id="quit-button">Rezygnuję</button>
+        <button id="quit-button" style="display: none;">Rezygnuję</button> <!-- Ukryty na początku -->
         <div id="result-container"></div>
     </div>
 
     <audio id="background-music" src="https://github.com/palilonc/milonerzy/raw/refs/heads/main/Theme%20Contestants%20-%20Who%20Wants%20to%20Be%20a%20Millionaire_.mp3" preload="auto"></audio>
-    
-    <button id="play-music">Odtwórz muzykę</button>
 
     <script>
         document.getElementById('play-music').addEventListener('click', function() {
@@ -190,6 +189,13 @@
         let score = 0;
         let timer;
         let timeLeft = maxTime;
+        const maxQuestions = 2; // Gra kończy się po 2 pytaniach
+        const backgroundMusic = document.getElementById('background-music');
+
+        document.getElementById('start-button').addEventListener('click', function() {
+            startQuiz();
+            backgroundMusic.play(); // Odtwórz muzykę po starcie gry
+        });
 
         function startQuiz() {
             currentQuestionIndex = 0;
@@ -202,6 +208,7 @@
             document.getElementById('question-container').style.display = 'block';
             document.getElementById('result-container').style.display = 'none';
             document.getElementById('timer').style.display = 'inline';
+            document.getElementById('start-button').style.display = 'none'; // Ukryj przycisk startu
             shuffleQuestions(); // Losowanie pytań
             showQuestion();
             startTimer();
@@ -215,7 +222,7 @@
         }
 
         function showQuestion() {
-            if (currentQuestionIndex < questions.length) {
+            if (currentQuestionIndex < maxQuestions) { // Zakończ grę po 2 pytaniach
                 resetTimer(); // Resetujemy licznik czasu przy nowym pytaniu
                 const question = questions[currentQuestionIndex];
                 document.querySelector('.question').innerText = question.question;
@@ -273,13 +280,8 @@
 
         document.getElementById('quit-button').addEventListener('click', endQuiz);
 
-        // Start quiz on page load
-        window.onload = startQuiz;
-
-        const backgroundMusic = document.getElementById('background-music');
         backgroundMusic.volume = 0.5;
         backgroundMusic.loop = true;
-        backgroundMusic.play();
     </script>
 </body>
 </html>
