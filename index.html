@@ -256,7 +256,7 @@
             document.getElementById('result-container').style.display = 'block';
             document.getElementById('quit-button').style.display = 'none';
             document.getElementById('lifeline-button').style.display = 'none';
-            document.getElementById('start-button').style.display = 'inline-block'; // Przywraca przycisk startu
+            document.getElementById('start-button').style.display = 'block'; // Przywróć przycisk startu
             showScoreboard();
         }
 
@@ -290,23 +290,44 @@
         document.getElementById('quit-button').addEventListener('click', endQuiz);
 
         function showScoreboard() {
+            const savedScores = JSON.parse(localStorage.getItem('scoreboard')) || [];
+            const scoreboardBody = document.getElementById('scoreboard-body');
+            scoreboardBody.innerHTML = '';
+            savedScores.forEach(entry => {
+                const newRow = scoreboardBody.insertRow();
+                const nameCell = newRow.insertCell(0);
+                const scoreCell = newRow.insertCell(1);
+                nameCell.innerText = entry.name;
+                scoreCell.innerText = entry.score;
+            });
             document.getElementById('scoreboard-container').style.display = 'block';
         }
 
         document.getElementById('save-score-button').addEventListener('click', function() {
             const name = document.getElementById('name-input').value;
             if (name) {
-                const scoreboardBody = document.getElementById('scoreboard-body');
-                const newRow = scoreboardBody.insertRow();
-                const nameCell = newRow.insertCell(0);
-                const scoreCell = newRow.insertCell(1);
-                nameCell.innerText = name;
-                scoreCell.innerText = score;
+                const savedScores = JSON.parse(localStorage.getItem('scoreboard')) || [];
+                savedScores.push({ name: name, score: score });
+                localStorage.setItem('scoreboard', JSON.stringify(savedScores));
+                updateScoreboard();
                 document.getElementById('name-input').value = '';
             } else {
                 alert("Proszę wpisać swoje imię.");
             }
         });
+
+        function updateScoreboard() {
+            const scoreboardBody = document.getElementById('scoreboard-body');
+            scoreboardBody.innerHTML = '';
+            const savedScores = JSON.parse(localStorage.getItem('scoreboard')) || [];
+            savedScores.forEach(entry => {
+                const newRow = scoreboardBody.insertRow();
+                const nameCell = newRow.insertCell(0);
+                const scoreCell = newRow.insertCell(1);
+                nameCell.innerText = entry.name;
+                scoreCell.innerText = entry.score;
+            });
+        }
     </script>
 </body>
 </html>
